@@ -16,6 +16,9 @@ public class MemberJoinDto {
     private String companyName;
 
     public MemberJoinDto(String loginEmail, String loginPassword, String loginPasswordVerify, String companyName) {
+        MemberJoinValidator memberJoinValidator = new MemberJoinValidator();
+        memberJoinValidator.validate(loginEmail, loginPassword, loginPasswordVerify, companyName);
+
         this.loginEmail = loginEmail;
         this.loginPassword = loginPassword;
         this.loginPasswordVerify = loginPasswordVerify;
