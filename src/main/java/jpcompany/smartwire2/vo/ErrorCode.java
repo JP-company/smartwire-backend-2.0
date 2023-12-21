@@ -16,7 +16,6 @@ public enum ErrorCode {
     INVALID_COMPANY_NAME,
     INVALID_EMAIL;
 
-    private int code;
     private String reason;
 
     @RequiredArgsConstructor
@@ -32,7 +31,6 @@ public enum ErrorCode {
                     .forEach(errorCode -> // EMPTY, INVALID_PASSWORD , ...
                             repository.findByNameAndLocale(errorCode.name(), locale)
                                     .ifPresent(errorCodeDto -> {
-                                        errorCode.code = errorCodeDto.getCode();
                                         errorCode.reason = errorCodeDto.getReason();
                                     })
                     );

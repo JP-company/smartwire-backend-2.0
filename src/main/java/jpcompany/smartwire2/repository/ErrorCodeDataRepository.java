@@ -34,7 +34,7 @@ public class ErrorCodeDataRepository {
     }
 
     public Optional<ErrorCodeDto> findByNameAndLocale(String name, String locale) {
-        String sql = "SELECT code, reason " +
+        String sql = "SELECT reason " +
                      "FROM errors " +
                      "WHERE name = :name and locale = :locale";
 

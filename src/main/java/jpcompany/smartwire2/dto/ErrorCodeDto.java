@@ -10,6 +10,5 @@ import lombok.ToString;
 public class ErrorCodeDto {
     private String locale;
     private String name;
-    private int code;
     private String reason;
 }
