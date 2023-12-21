@@ -9,12 +9,7 @@ import java.util.Arrays;
 
 @Getter
 public enum ErrorCode {
-
-    EMPTY, // 하나하나가 모두 객체 EMPTY() 형태로 생성자를 호출하게 되어 있다.
-    // 맴버 변수로 code, reason을 갖는다.
-    INVALID_PASSWORD,
-    INVALID_COMPANY_NAME,
-    INVALID_EMAIL;
+    INVALID_JOIN_FORM;
 
     private String reason;
 
