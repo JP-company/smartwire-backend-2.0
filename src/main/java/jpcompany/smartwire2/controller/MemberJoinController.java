@@ -21,6 +21,7 @@ public class MemberJoinController {
         return "join/page";
     }
 
+    @Operation(summary = "회원 가입 페이지 요청", description = "화원 가입을 요청합니다.")
     @PostMapping("/join")
     public String join(@RequestParam String loginEmail,
                        @RequestParam String loginPassword,
