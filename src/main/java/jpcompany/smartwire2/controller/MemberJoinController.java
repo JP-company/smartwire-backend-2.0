@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -44,5 +45,8 @@ public class MemberJoinController {
         return JoinResponseDto.of(false, ErrorCode.INVALID_JOIN_FORM.getReason(), body);
     }
 
+    @InitBinder
+    public void init(WebDataBinder dataBinder) {
+        dataBinder.addValidators(joinValidator);
     }
 }
