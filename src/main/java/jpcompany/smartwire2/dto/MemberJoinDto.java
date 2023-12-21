@@ -1,37 +1,27 @@
 package jpcompany.smartwire2.dto;
 
-import jpcompany.smartwire2.dto.validator.MemberJoinValidator;
-import jpcompany.smartwire2.vo.ErrorCode;
+import jakarta.validation.constraints.*;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-import java.util.HashSet;
-import java.util.Set;
-
-
 @Getter
+@Setter
 @ToString
 public class MemberJoinDto {
-    private final Set<ErrorCode> errorCodes;
-
+    @NotBlank(message = "{NotBlank.memberJoinDto.loginEmail}")
+    @Email(message = "{Email.memberJoinDto.loginEmail}")
     private String loginEmail;
+
+    @NotBlank(message = "{NotBlank.memberJoinDto.loginPassword}")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!?@#$%^&*+=/])[a-zA-Z\\d!?@#$%^&*+=/]{10,20}$",
+            message = "{Pattern.memberJoinDto.loginPassword}")
     private String loginPassword;
+
+    @NotBlank(message = "{NotBlank.memberJoinDto.loginPasswordVerify}")
     private String loginPasswordVerify;
+
+    @NotBlank(message = "{NotBlank.memberJoinDto.companyName}")
+    @Size(min = 1, max = 20, message = "{Size.memberJoinDto.companyName}")
     private String companyName;
-
-    public MemberJoinDto() {
-        errorCodes = new HashSet<>();
-    }
-
-    public MemberJoinDto(String loginEmail, String loginPassword, String loginPasswordVerify, String companyName) {
-        MemberJoinValidator memberJoinValidator = new MemberJoinValidator();
-        errorCodes = memberJoinValidator.validate(loginEmail, loginPassword, loginPasswordVerify, companyName);
-
-        this.loginEmail = loginEmail;
-        this.loginPassword = loginPassword;
-        this.loginPasswordVerify = loginPasswordVerify;
-        this.companyName = companyName;
-    }
 }
-
