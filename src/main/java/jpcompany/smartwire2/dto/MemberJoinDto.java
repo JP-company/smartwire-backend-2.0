@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.dto;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,7 +15,7 @@ public class MemberJoinDto {
     private String loginEmail;
 
     @NotBlank(message = "{NotBlank.memberJoinDto.loginPassword}")
-    @Pattern(regexp = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!?@#$%^&*+=/])[a-zA-Z\\d!?@#$%^&*+=/]{10,20}$",
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!?@#$%^&*+=/])[a-zA-Z\\d!?@#$%^&*+=/]{10,20}$",
             message = "{Pattern.memberJoinDto.loginPassword}")
     private String loginPassword;
 
