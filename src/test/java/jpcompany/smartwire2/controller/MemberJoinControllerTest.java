@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
 import jpcompany.smartwire2.dto.MemberJoinDto;
 import jpcompany.smartwire2.vo.ErrorCode;
 import org.junit.jupiter.api.BeforeEach;
@@ -14,10 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -49,7 +47,6 @@ public class MemberJoinControllerTest {
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print())
                 .andExpect(jsonPath("success").value(true))
                 .andExpect(status().isOk());
     }
@@ -67,7 +64,6 @@ public class MemberJoinControllerTest {
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print())
                 .andExpect(jsonPath("success").value(false))
                 .andExpect(jsonPath("message").value(ErrorCode.INVALID_JOIN_FORM.getReason()))
                 .andExpect(jsonPath("$.body.loginEmail").exists())
@@ -77,7 +73,7 @@ public class MemberJoinControllerTest {
 
     @ParameterizedTest
     @DisplayName("잘못된 비밀번호 형식 입력")
-    @ValueSource(strings = {"123", "123456789012345678901", "rkskekfk1!", "Arkskekfk!", "Arkskekfk1", "ARKSKEKFK1!","Arkske kfk1!", ""})
+    @ValueSource(strings = {"123", "123456789012345678901", "rkskekfk1!", "Arkskekfk!", "Arkskekfk1", "ARKSKEKFK1!","Arkske kfk1!", "", " "})
     void invalidPasswordForm(String password) throws Exception {
         memberJoinDto.setLoginPassword(password);
         mvc
@@ -88,7 +84,6 @@ public class MemberJoinControllerTest {
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print())
                 .andExpect(jsonPath("success").value(false))
                 .andExpect(jsonPath("message").value(ErrorCode.INVALID_JOIN_FORM.getReason()))
                 .andExpect(jsonPath("$.body.loginPassword").exists())
@@ -96,8 +91,27 @@ public class MemberJoinControllerTest {
     }
 
     @ParameterizedTest
+    @DisplayName("비밀번호 확인 불일치")
+    @ValueSource(strings = {"123", "", " "})
+    void incorrectPasswordVerify(String password) throws Exception {
+        memberJoinDto.setLoginPasswordVerify(password);
+        mvc
+                .perform(
+                        MockMvcRequestBuilders
+                                .post("/api/join")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(objectMapper.writeValueAsString(memberJoinDto))
+                                .accept(MediaType.APPLICATION_JSON)
+                )
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(jsonPath("message").value(ErrorCode.INVALID_JOIN_FORM.getReason()))
+                .andExpect(jsonPath("$.body.loginPasswordVerify").exists())
+                .andExpect(status().isBadRequest());
+    }
+
+    @ParameterizedTest
     @DisplayName("잘못된 회사 이름 형식 입력")
-    @ValueSource(strings = {"", "회사이름회사이름회사이름회사이름회사이름회"})
+    @ValueSource(strings = {" ", "", "회사이름회사이름회사이름회사이름회사이름회"})
     void invalidCompanyNameForm(String companyName) throws Exception {
         memberJoinDto.setCompanyName(companyName);
         mvc
@@ -108,7 +122,6 @@ public class MemberJoinControllerTest {
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
                 )
-                .andDo(print())
                 .andExpect(jsonPath("success").value(false))
                 .andExpect(jsonPath("message").value(ErrorCode.INVALID_JOIN_FORM.getReason()))
                 .andExpect(jsonPath("$.body.companyName").exists())
