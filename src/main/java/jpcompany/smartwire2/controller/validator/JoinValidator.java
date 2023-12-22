@@ -28,12 +28,12 @@ public class JoinValidator implements Validator {
 
         if (!Objects.equals(memberJoinDto.getLoginPassword(), memberJoinDto.getLoginPasswordVerify())) {
             errors.rejectValue("loginPasswordVerify", "InCorrectPassword",
-                    Objects.requireNonNull(environment.getProperty("InCorrectPassword.memberJoinDto.loginPasswordVerify")));
+                    environment.getProperty("InCorrectPassword.loginPasswordVerify"));
         }
 
         if (Objects.equals(memberJoinDto.getLoginEmail(), "wjsdj2008@gmail.com")) {
             errors.rejectValue("loginEmail","DuplicateEmail",
-                    Objects.requireNonNull(environment.getProperty("DuplicateEmail.memberJoinDto.loginEmail")));
+                    environment.getProperty("DuplicateEmail.loginEmail"));
         }
     }
 }
