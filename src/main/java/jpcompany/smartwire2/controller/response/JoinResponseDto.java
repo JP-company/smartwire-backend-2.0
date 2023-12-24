@@ -3,8 +3,6 @@ package jpcompany.smartwire2.controller.response;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import java.util.Map;
-
 @Getter
 @RequiredArgsConstructor
 public class JoinResponseDto {

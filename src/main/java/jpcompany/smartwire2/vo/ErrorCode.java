@@ -17,14 +17,14 @@ public enum ErrorCode {
     @Component
     public static class ErrorMessageInjector {
 
-        private final ErrorCodeDataRepository repository;
+        private final ErrorCodeDataRepository errorCodeDataRepository;
         private final String locale = "ko";
 
         @PostConstruct
         public void postConstruct() {
             Arrays.stream(ErrorCode.values())
                     .forEach(errorCode -> // EMPTY, INVALID_PASSWORD , ...
-                            repository.findByNameAndLocale(errorCode.name(), locale)
+                            errorCodeDataRepository.findByNameAndLocale(errorCode.name(), locale)
                                     .ifPresent(errorCodeDto -> {
                                         errorCode.reason = errorCodeDto.getReason();
                                     })
