@@ -3,7 +3,9 @@ package jpcompany.smartwire2.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jpcompany.smartwire2.controller.response.JoinResponseDto;
 import jpcompany.smartwire2.controller.validator.JoinValidator;
+import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.dto.MemberJoinDto;
+import jpcompany.smartwire2.service.MemberJoinService;
 import jpcompany.smartwire2.vo.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +28,7 @@ import java.util.List;
 public class MemberJoinController {
 
     private final JoinValidator joinValidator;
+    private final MemberJoinService memberJoinService;
 
     @Operation(summary = "회원 가입 페이지 요청", description = "화원 가입을 요청합니다.")
     @PostMapping("/join")
@@ -33,6 +36,7 @@ public class MemberJoinController {
         if (bindingResult.hasFieldErrors()) {
             return new ResponseEntity<>(badResponseWithErrors(bindingResult), HttpStatus.BAD_REQUEST);
         }
+        Member savedMember = memberJoinService.join(memberJoinDto);
         return new ResponseEntity<>(JoinResponseDto.of(true, null,null), HttpStatus.OK);
     }
 
