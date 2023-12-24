@@ -1,6 +1,8 @@
 package jpcompany.smartwire2.controller.validator;
 
+import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.dto.MemberJoinDto;
+import jpcompany.smartwire2.repository.MemberJoinRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
@@ -9,6 +11,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -16,6 +19,7 @@ import java.util.Objects;
 public class JoinValidator implements Validator {
 
     private final Environment environment;
+    private final MemberJoinRepository memberJoinRepository;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -31,7 +35,7 @@ public class JoinValidator implements Validator {
                     environment.getProperty("InCorrectPassword.loginPasswordVerify"));
         }
 
-        if (Objects.equals(memberJoinDto.getLoginEmail(), "wjsdj2008@gmail.com")) {
+        if (memberJoinRepository.findByLoginEmail(memberJoinDto.getLoginEmail()).isPresent()) {
             errors.rejectValue("loginEmail","DuplicateEmail",
                     environment.getProperty("DuplicateEmail.loginEmail"));
         }

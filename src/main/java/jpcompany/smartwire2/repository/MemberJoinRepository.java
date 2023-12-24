@@ -35,4 +35,29 @@ public class MemberJoinRepository {
                 .id(key.longValue())
                 .build();
     }
+
+    public Optional<Member> findByLoginEmail(String email) {
+        String sql = "SELECT * " +
+                     "FROM members " +
+                     "WHERE login_email = :login_email";
+        try {
+            Map<String, Object> param = Map.of(MemberConstant.LOGIN_EMAIL, email);
+            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            return Optional.ofNullable(member);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    private RowMapper<Member> MemberRowMapper() {
+        return (rs, rowNum) ->
+                Member.builder()
+                .id(rs.getLong(MemberConstant.ID))
+                .loginEmail(rs.getString(MemberConstant.LOGIN_EMAIL))
+                .loginPassword(rs.getString(MemberConstant.LOGIN_PASSWORD))
+                .companyName(rs.getString(MemberConstant.COMPANY_NAME))
+                .role(rs.getString(MemberConstant.ROLE))
+                .createdDateTime(rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class))
+                .build();
+    }
 }
