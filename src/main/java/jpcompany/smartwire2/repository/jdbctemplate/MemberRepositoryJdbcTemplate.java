@@ -1,7 +1,7 @@
-package jpcompany.smartwire2.repository;
+package jpcompany.smartwire2.repository.jdbctemplate;
 
 import jpcompany.smartwire2.domain.Member;
-import jpcompany.smartwire2.repository.constant.MemberConstant;
+import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstant;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -16,24 +16,33 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class MemberJoinRepository {
+public class MemberRepositoryJdbcTemplate {
 
     private final NamedParameterJdbcTemplate template;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public MemberJoinRepository(DataSource dataSource) {
+    public MemberRepositoryJdbcTemplate(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(MemberConstant.TABLE_NAME)
                 .usingGeneratedKeyColumns(MemberConstant.ID);
     }
 
-    public Member save(Member member) {
+    public Long save(Member member) {
         SqlParameterSource param = new BeanPropertySqlParameterSource(member);
         Number key = jdbcInsert.executeAndReturnKey(param);
-        return member.toBuilder()
-                .id(key.longValue())
-                .build();
+        return key.longValue();
+    }
+
+    public void updateRoleById(Long memberId, Member.Role role) {
+        String sql = "UPDATE members " +
+                     "SET role=:role " +
+                     "WHERE id=:id";
+        Map<String, Object> param = Map.of(
+                MemberConstant.ID, memberId,
+                MemberConstant.ROLE, role.name()
+        );
+        template.update(sql, param);
     }
 
     public Optional<Member> findByLoginEmail(String email) {
@@ -51,13 +60,13 @@ public class MemberJoinRepository {
 
     private RowMapper<Member> MemberRowMapper() {
         return (rs, rowNum) ->
-                Member.builder()
-                .id(rs.getLong(MemberConstant.ID))
-                .loginEmail(rs.getString(MemberConstant.LOGIN_EMAIL))
-                .loginPassword(rs.getString(MemberConstant.LOGIN_PASSWORD))
-                .companyName(rs.getString(MemberConstant.COMPANY_NAME))
-                .role(rs.getString(MemberConstant.ROLE))
-                .createdDateTime(rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class))
-                .build();
+                new Member(
+                        rs.getLong(MemberConstant.ID),
+                        rs.getString(MemberConstant.LOGIN_EMAIL),
+                        rs.getString(MemberConstant.LOGIN_PASSWORD),
+                        rs.getString(MemberConstant.COMPANY_NAME),
+                        Member.Role.valueOf(rs.getString(MemberConstant.ROLE)),
+                        rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class)
+                );
     }
 }
