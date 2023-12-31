@@ -25,7 +25,7 @@ public class MemberValidator {
     }
 
     private void validateCompanyName(String companyName) {
-        String companyNameRegex = ".{1,20}";
+        String companyNameRegex = "^[^ ](.{0,18}[^ ])?$";
         if (!companyName.matches(companyNameRegex)) {
             throw new IllegalArgumentException(ErrorCode.INVALID_INPUT.getReason());
         }
