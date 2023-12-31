@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+src/main/resources/application.properties
+*.properties
+src/test/java/jpcompany/smartwire2/TestAnything.java
