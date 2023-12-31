@@ -28,9 +28,9 @@ public record Member(
     public static Member createMember(String loginEmail, String loginPassword, String companyName) {
         return new Member(
                 null,
-                loginEmail,
-                loginPassword,
-                companyName,
+                loginEmail.trim(),
+                loginPassword.trim(),
+                companyName.trim(),
                 Role.EMAIL_UNAUTHORIZED,
                 LocalDateTime.now().withNano(0)
         );
