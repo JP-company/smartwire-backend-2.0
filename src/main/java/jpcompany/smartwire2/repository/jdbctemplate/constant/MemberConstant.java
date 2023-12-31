@@ -1,4 +1,4 @@
-package jpcompany.smartwire2.repository.constant;
+package jpcompany.smartwire2.repository.jdbctemplate.constant;
 
 public class MemberConstant {
     public static final String TABLE_NAME = "members";

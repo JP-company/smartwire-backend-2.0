@@ -1,9 +1,9 @@
-package jpcompany.smartwire2.repository;
+package jpcompany.smartwire2.repository.jdbctemplate;
 
-import jpcompany.smartwire2.dto.ErrorCodeDto;
-import jpcompany.smartwire2.repository.constant.ErrorCodeConstant;
+import jpcompany.smartwire2.common.error.dto.ErrorCodeDto;
+import jpcompany.smartwire2.repository.jdbctemplate.constant.ErrorCodeConstant;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.Optional;
 
 @Repository
-public class ErrorCodeDataRepository {
+public class ErrorCodeRepositoryJdbcTemplate {
     private final NamedParameterJdbcTemplate template;
     private final SimpleJdbcInsert jdbcInsert;
 
-    public ErrorCodeDataRepository(DataSource dataSource) {
+    public ErrorCodeRepositoryJdbcTemplate(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
                 .withTableName(ErrorCodeConstant.TABLE_NAME)
@@ -34,7 +34,7 @@ public class ErrorCodeDataRepository {
     }
 
     public Optional<ErrorCodeDto> findByNameAndLocale(String name, String locale) {
-        String sql = "SELECT reason " +
+        String sql = "SELECT reason, http_status " +
                      "FROM errors " +
                      "WHERE name = :name and locale = :locale";
 
@@ -48,6 +48,11 @@ public class ErrorCodeDataRepository {
     }
 
     private RowMapper<ErrorCodeDto> ErrorCodeDtoRowMapper() {
-        return BeanPropertyRowMapper.newInstance(ErrorCodeDto.class);
+        return ((rs, rowNum) -> {
+            ErrorCodeDto errorCodeDto = new ErrorCodeDto();
+            errorCodeDto.setReason(rs.getString(ErrorCodeConstant.REASON));
+            errorCodeDto.setHttpStatus(HttpStatus.valueOf(rs.getInt(ErrorCodeConstant.HTTP_STATUS)));
+            return errorCodeDto;
+        });
     }
 }
