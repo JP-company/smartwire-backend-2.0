@@ -3,13 +3,12 @@ package jpcompany.smartwire2.integrated;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
-import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -18,11 +17,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.sql.DataSource;
 
@@ -30,7 +26,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@Transactional
 public class MemberIntegratedTest {
 
     @Autowired
@@ -40,9 +35,8 @@ public class MemberIntegratedTest {
 
     @TestConfiguration
     static class TestConfig {
-        private final DataSource dataSource = createDataSource();
-
-        public DataSource createDataSource() {
+        @Bean
+        public DataSource dataSource() {
             return new EmbeddedDatabaseBuilder()
                     .setType(EmbeddedDatabaseType.H2)
                     .addScript("classpath:schema.sql")
@@ -50,34 +44,23 @@ public class MemberIntegratedTest {
                     .continueOnError(true)
                     .build();
         }
-
-        @Bean
-        public JavaMailSender javaMailSender() {
-            return new JavaMailSenderImpl();
-        }
-
-        @Bean
-        public MemberRepositoryJdbcTemplate memberRepositoryJdbcTemplate() {
-            return new MemberRepositoryJdbcTemplate(dataSource);
-        }
     }
 
     @BeforeEach
     void beforeEach() {
         memberJoinDto.setLoginEmail("wjsdj2008@naver.com");
-        memberJoinDto.setLoginPassword("Arkskekfk1!");
-        memberJoinDto.setLoginPasswordVerify("Arkskekfk1!");
+        memberJoinDto.setLoginPassword("Qweasdzxc1!");
+        memberJoinDto.setLoginPasswordVerify("Qweasdzxc1!");
         memberJoinDto.setCompanyName("SIT");
     }
 
     @Test
     @DisplayName("회원가입 폼 정상 입력")
     void joinFormReceive() throws Exception {
-
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                        .post("/api/join")
+                        .post("/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -94,7 +77,7 @@ public class MemberIntegratedTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/api/join")
+                                .post("/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -113,7 +96,7 @@ public class MemberIntegratedTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/api/join")
+                                .post("/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -131,7 +114,7 @@ public class MemberIntegratedTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/api/join")
+                                .post("/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -149,7 +132,7 @@ public class MemberIntegratedTest {
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
-                                .post("/api/join")
+                                .post("/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
