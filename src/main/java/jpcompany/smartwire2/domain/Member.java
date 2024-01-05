@@ -1,38 +1,40 @@
 package jpcompany.smartwire2.domain;
 
 import jpcompany.smartwire2.domain.validator.MemberValidator;
-import lombok.*;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
-public record Member(
-        Long id,
-        String loginEmail,
-        String loginPassword,
-        String companyName,
-        Role role,
-        LocalDateTime createdDateTime
-) {
+@Getter
+@ToString
+@Builder(toBuilder = true)
+public class Member {
+    private Long id;
+    private String loginEmail;
+    private String loginPassword;
+    private String companyName;
+    private Role role;
+    private LocalDateTime createdDateTime;
+
     public enum Role {
-        EMAIL_UNAUTHORIZED, MEMBER, ADMIN
+        ADMIN, MEMBER, EMAIL_UNAUTHORIZED
     }
 
-    public Member {
+    public static Member initMember(String loginEmail, String loginPassword, String companyName) {
         new MemberValidator().validate(
-                        loginEmail,
-                        loginPassword,
-                        companyName
-                );
+                loginEmail,
+                loginPassword,
+                companyName
+        );
+        return Member.builder()
+                .loginEmail(loginEmail)
+                .loginPassword(loginPassword)
+                .companyName(companyName)
+                .role(Role.EMAIL_UNAUTHORIZED)
+                .createdDateTime(LocalDateTime.now().withNano(0))
+                .build();
     }
 
-    public static Member createMember(String loginEmail, String loginPassword, String companyName) {
-        return new Member(
-                null,
-                loginEmail.trim(),
-                loginPassword.trim(),
-                companyName.trim(),
-                Role.EMAIL_UNAUTHORIZED,
-                LocalDateTime.now().withNano(0)
-        );
-    }
 }

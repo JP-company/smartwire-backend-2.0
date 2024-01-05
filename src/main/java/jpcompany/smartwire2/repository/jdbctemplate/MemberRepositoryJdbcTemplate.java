@@ -2,6 +2,7 @@ package jpcompany.smartwire2.repository.jdbctemplate;
 
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstant;
+import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -28,7 +29,7 @@ public class MemberRepositoryJdbcTemplate {
                 .usingGeneratedKeyColumns(MemberConstant.ID);
     }
 
-    public Long save(Member member) {
+    public Long save(MemberJoinTransfer member) {
         SqlParameterSource param = new BeanPropertySqlParameterSource(member);
         Number key = jdbcInsert.executeAndReturnKey(param);
         return key.longValue();
@@ -45,12 +46,28 @@ public class MemberRepositoryJdbcTemplate {
         template.update(sql, param);
     }
 
-    public Optional<Member> findByLoginEmail(String email) {
+    public Optional<Member> findByLoginEmail(String encodedLoginEmail) {
         String sql = "SELECT * " +
                      "FROM members " +
                      "WHERE login_email = :login_email";
         try {
-            Map<String, Object> param = Map.of(MemberConstant.LOGIN_EMAIL, email);
+            Map<String, Object> param = Map.of(MemberConstant.LOGIN_EMAIL, encodedLoginEmail);
+            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            return Optional.ofNullable(member);
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<Member> findByIdAndLoginEmail(Long id, String loginEmail) {
+        String sql = "SELECT * " +
+                "FROM members " +
+                "WHERE id = :id and login_email = :login_email";
+        try {
+            Map<String, Object> param = Map.of(
+                    MemberConstant.LOGIN_EMAIL, loginEmail,
+                    MemberConstant.ID, id
+            );
             Member member = template.queryForObject(sql, param, MemberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
@@ -60,13 +77,13 @@ public class MemberRepositoryJdbcTemplate {
 
     private RowMapper<Member> MemberRowMapper() {
         return (rs, rowNum) ->
-                new Member(
-                        rs.getLong(MemberConstant.ID),
-                        rs.getString(MemberConstant.LOGIN_EMAIL),
-                        rs.getString(MemberConstant.LOGIN_PASSWORD),
-                        rs.getString(MemberConstant.COMPANY_NAME),
-                        Member.Role.valueOf(rs.getString(MemberConstant.ROLE)),
-                        rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class)
-                );
+                Member.builder()
+                        .id(rs.getLong(MemberConstant.ID))
+                        .loginEmail(rs.getString(MemberConstant.LOGIN_EMAIL))
+                        .loginPassword(rs.getString(MemberConstant.LOGIN_PASSWORD))
+                        .companyName(rs.getString(MemberConstant.COMPANY_NAME))
+                        .role(Member.Role.valueOf(rs.getString(MemberConstant.ROLE)))
+                        .createdDateTime(rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class))
+                        .build();
     }
 }
