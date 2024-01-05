@@ -24,10 +24,24 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
+	implementation 'com.h2database:h2' // h2 : implementation
+	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 API
+	implementation 'com.auth0:java-jwt:3.18.2' // jwt
+
 	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
+	runtimeOnly 'com.mysql:mysql-connector-j' // MySQL 드라이버 라이브러리
+	runtimeOnly 'com.h2database:h2'
+
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('bootBuildImage') {
