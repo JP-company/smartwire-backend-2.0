@@ -1,10 +1,10 @@
 package jpcompany.smartwire2.service.dto;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@Builder
 public class MemberJoinCommand {
     private String loginEmail;
     private String loginPassword;
