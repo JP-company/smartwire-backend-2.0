@@ -3,21 +3,26 @@ package jpcompany.smartwire2.unit.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.common.error.dto.ErrorCodeDto;
-import jpcompany.smartwire2.common.jwt.JwtToken;
+import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.controller.MemberController;
 import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
 import jpcompany.smartwire2.controller.dto.request.validator.JoinValidator;
 import jpcompany.smartwire2.repository.jdbctemplate.ErrorCodeRepositoryJdbcTemplate;
 import jpcompany.smartwire2.service.MemberService;
+import jpcompany.smartwire2.service.dto.MemberJoinCommand;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,13 +37,23 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(MemberController.class)
+@WebMvcTest(
+        controllers = MemberController.class,
+        excludeAutoConfiguration = SecurityAutoConfiguration.class
+)
 class MemberControllerTest {
 
-    @MockBean
-    private MemberService memberService;
     @Autowired
     private MockMvc mockMvc;
+    @MockBean
+    private MemberService memberService;
+    @SpyBean
+    private JoinValidator joinValidator;
+    @SpyBean
+    private JwtTokenService jwtTokenService;
+    @SpyBean
+    private ErrorCode.ErrorMessageInjector errorMessageInjector;
+
     private final MemberJoinDto memberJoinDto = new MemberJoinDto();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -64,27 +79,15 @@ class MemberControllerTest {
                     });
             return mockRepository;
         }
-        @Bean
-        public JoinValidator joinValidator() {
-            return new JoinValidator();
-        }
-        @Bean
-        public JwtToken jwtToken() {
-            return new JwtToken();
-        }
-        @Bean
-        public ErrorCode.ErrorMessageInjector errorMessageInjector(ErrorCodeRepositoryJdbcTemplate errorCodeRepositoryJdbcTemplate) {
-            return new ErrorCode.ErrorMessageInjector(errorCodeRepository());
-        }
     }
 
     @Test
-    @DisplayName("회원가입 폼 정상 입력")
+    @DisplayName("회원가입 폼 정상 입력_200_OK")
     void join() throws Exception {
         // when
         ResultActions resultActions = mockMvc.perform(
                         MockMvcRequestBuilders
-                                .post("/api/join")
+                                .post("/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -96,8 +99,27 @@ class MemberControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("서비스_예외_발생_처리_400_BAD_REQUEST")
+    void exceptionHandle() throws Exception {
+        // when
+        doThrow(new IllegalArgumentException("213")).when(memberService).join(any(MemberJoinCommand.class));
+        ResultActions resultActions = mockMvc.perform(
+                MockMvcRequestBuilders
+                        .post("/join")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(memberJoinDto))
+                        .accept(MediaType.APPLICATION_JSON)
+        );
+
+        // then
+        resultActions
+                .andExpect(jsonPath("success").value(false))
+                .andExpect(status().isBadRequest());
+    }
+
     @ParameterizedTest
-    @DisplayName("이메일 값이 비어있을 시 400 오류 응답")
+    @DisplayName("빈_이메일_입력값_400_BAD_REQUEST")
     @ValueSource(strings = {""," "})
     void invalidEmailForm(String email) throws Exception {
         // given
@@ -106,7 +128,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/api/join")
+                        .post("/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -121,7 +143,7 @@ class MemberControllerTest {
 
 
     @ParameterizedTest
-    @DisplayName("비밀번호 값이 비어있을 시 400 오류 응답")
+    @DisplayName("빈_비밀번호_입력값_400_BAD_REQUEST")
     @ValueSource(strings = {"", " "})
     void invalidPasswordForm(String password) throws Exception {
         // given
@@ -130,7 +152,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/api/join")
+                        .post("/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -144,7 +166,7 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("비밀번호 확인 불일치 시 400 오류 응답")
+    @DisplayName("비밀번호_확인_불일치_400_BAD_REQUEST")
     @ValueSource(strings = {"123", "Qweasdzxc1!!", "", " "})
     void incorrectPasswordVerify(String password) throws Exception {
         // given
@@ -153,7 +175,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/api/join")
+                        .post("/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -167,7 +189,7 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("회사 이름 값이 비어있을 시 400 오류 응답")
+    @DisplayName("빈_회사이름_입력값_400_BAD_REQUEST")
     @ValueSource(strings = {" ", ""})
     void invalidCompanyNameForm(String companyName) throws Exception {
         // given
@@ -176,7 +198,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/api/join")
+                        .post("/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
