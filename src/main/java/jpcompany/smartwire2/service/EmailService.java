@@ -2,7 +2,7 @@ package jpcompany.smartwire2.service;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
-import jpcompany.smartwire2.common.jwt.JwtToken;
+import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -15,11 +15,11 @@ public class EmailService {
 
     private final JavaMailSender javaMailSender;
     private final SpringTemplateEngine templateEngine;
-    private final JwtToken jwtToken;
+    private final JwtTokenService jwtTokenService;
 
     public void sendEmail(Long memberId, String loginEmail) {
         try {
-            String emailAuthToken = jwtToken.createEmailAuthToken(memberId);
+            String emailAuthToken = jwtTokenService.createEmailAuthJwtToken(memberId);
             MimeMessage emailForm = createEmailForm(loginEmail, emailAuthToken);
             javaMailSender.send(emailForm);
         } catch (MessagingException e) {
