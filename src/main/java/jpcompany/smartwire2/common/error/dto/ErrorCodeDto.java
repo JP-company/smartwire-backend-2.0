@@ -1,9 +1,7 @@
 package jpcompany.smartwire2.common.error.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 @Setter

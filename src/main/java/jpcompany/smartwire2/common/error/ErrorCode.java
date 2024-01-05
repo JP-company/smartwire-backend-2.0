@@ -4,6 +4,7 @@ import jakarta.annotation.PostConstruct;
 import jpcompany.smartwire2.repository.jdbctemplate.ErrorCodeRepositoryJdbcTemplate;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import java.util.Arrays;
@@ -22,7 +23,8 @@ public enum ErrorCode {
     public static class ErrorMessageInjector {
 
         private final ErrorCodeRepositoryJdbcTemplate errorCodeRepositoryJdbcTemplate;
-        private final String locale = "ko";
+        @Value("${error.message.locale}")
+        private String locale;
 
         @PostConstruct
         public void postConstruct() {
