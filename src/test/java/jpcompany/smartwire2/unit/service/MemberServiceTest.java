@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.unit.service;
 
+import jpcompany.smartwire2.common.encryptor.OneWayEncryptor;
+import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
 import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
 import jpcompany.smartwire2.service.EmailService;
 import jpcompany.smartwire2.service.MemberService;
@@ -12,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,17 +26,21 @@ class MemberServiceTest {
     private MemberRepositoryJdbcTemplate memberRepositoryJdbcTemplate;
     @Mock
     private EmailService emailService;
+    @Mock
+    private TwoWayEncryptor twoWayEncryptor;
+    @Mock
+    private OneWayEncryptor oneWayEncryptor;
 
     @Test
     @DisplayName("정상 회원가입 서비스 메서드 호출")
     void join() {
         // given
         MemberJoinCommand memberJoinCommand =
-                new MemberJoinCommand(
-                        "wjsdj2008@naver.com",
-                        "Qweasdzxc1!",
-                        "회사이름"
-                );
+                MemberJoinCommand.builder()
+                        .loginEmail("wjsdj2008@naver.com")
+                        .loginPassword("Qweasdzxc1!")
+                        .companyName("회사이름")
+                        .build();
 
         // when, then
         memberService.join(memberJoinCommand);
@@ -45,11 +52,11 @@ class MemberServiceTest {
     void invalidInput(String email) {
         // given
         MemberJoinCommand memberJoinCommand =
-                new MemberJoinCommand(
-                        email,
-                        "Qweasdzxc1!",
-                        "회사이름"
-                );
+                MemberJoinCommand.builder()
+                        .loginEmail(email)
+                        .loginPassword("Qweasdzxc1!")
+                        .companyName("회사이름")
+                        .build();
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
@@ -62,11 +69,11 @@ class MemberServiceTest {
     void invalidPasswordForm(String password) {
         // given
         MemberJoinCommand memberJoinCommand =
-                new MemberJoinCommand(
-                        "wjsdj2008@gmail.com",
-                        password,
-                        "회사이름"
-                );
+                MemberJoinCommand.builder()
+                        .loginEmail("wjsdj2008@naver.com")
+                        .loginPassword(password)
+                        .companyName("회사이름")
+                        .build();
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
@@ -80,11 +87,11 @@ class MemberServiceTest {
     void invalidCompanyNameForm(String companyName) {
         // given
         MemberJoinCommand memberJoinCommand =
-                new MemberJoinCommand(
-                        "wjsdj2008@gmail.com",
-                        "Qweasdzxc1!",
-                        companyName
-                );
+                MemberJoinCommand.builder()
+                        .loginEmail("wjsdj2008@naver.com")
+                        .loginPassword("Qweasdzxc1!")
+                        .companyName(companyName)
+                        .build();
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
