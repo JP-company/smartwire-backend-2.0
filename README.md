@@ -7,6 +7,9 @@
 =====
 실시간 기계 상태 알림 프로그램
 
+- 깃허브
+https://github.com/JP-company/smartwire
+
 프로젝트 소개
 -----
 - 제조 공장에 1년 간 일하면서 직접 다뤘던 기계의 문제점을 해결하고자 시작한 프로젝트 입니다.
@@ -66,6 +69,12 @@ https://github.com/JP-company/smartwire/assets/77595494/ded56e60-393e-4eae-a09c-
 
 
 ### 서비스 링크
+- 테스트 계정
+
+  ID : wjsdj2009 <br>
+  PASSWORD : Qweasdzxc1!
+
+
 - 웹페이지 링크 <br>
   https://smartwire-backend-f39394ac6218.herokuapp.com/
 
