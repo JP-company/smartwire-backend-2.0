@@ -1,15 +1,24 @@
 package jpcompany.smartwire2.common.security.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
+import jpcompany.smartwire2.controller.dto.response.ResponseDto;
 import jpcompany.smartwire2.domain.Member;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 
 @Component
@@ -24,13 +33,34 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication
-    ) {
+    ) throws IOException {
         Member member = (Member) authentication.getPrincipal();
 
-        String encodedLoginEmail = twoWayEncryptor.encrypt(member.getLoginEmail());
-        String loginAuthJwtToken = jwtTokenService.createLoginAuthJwtToken(member.getId(), encodedLoginEmail);
+        addTokenToHeader(response, member);
+        setHeader(response);
+        setBody(response, member);
+    }
 
+    private void setBody(HttpServletResponse response, Member member) throws IOException {
+        ResponseDto responseDto = new ResponseDto(true, null, member);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        String responseBody = objectMapper.writeValueAsString(responseDto);
+
+        PrintWriter writer = response.getWriter();
+        writer.write(responseBody);
+        writer.flush();
+    }
+
+    private void setHeader(HttpServletResponse response) {
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        response.setStatus(HttpStatus.OK.value());
+    }
+
+    private void addTokenToHeader(HttpServletResponse response, Member member) {
+        String loginAuthJwtToken = jwtTokenService.createLoginAuthToken(member.getId());
         response.addHeader(JwtConstant.HEADER_STRING, JwtConstant.TOKEN_PREFIX + loginAuthJwtToken);
-        response.setContentType("application/json; charset=utf-8");
     }
 }
