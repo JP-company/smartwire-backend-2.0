@@ -3,7 +3,6 @@ package jpcompany.smartwire2.common.email;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
@@ -12,16 +11,14 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-
-    @Value("${email.from}")
-    String emailFrom;
+    private final String EMAIL_FROM = "스마트 와이어";
 
     public void sendEmail(String emailTo, String title, String content) {
         try {
             MimeMessage emailForm = javaMailSender.createMimeMessage();
             emailForm.addRecipients(MimeMessage.RecipientType.TO, emailTo);
             emailForm.setSubject(title);
-            emailForm.setFrom(emailFrom);
+            emailForm.setFrom(EMAIL_FROM);
             emailForm.setText(content, "utf-8", "html");
             javaMailSender.send(emailForm);
         } catch (MessagingException e) {
