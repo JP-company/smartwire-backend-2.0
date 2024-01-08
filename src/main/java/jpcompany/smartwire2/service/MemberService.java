@@ -69,7 +69,8 @@ public class MemberService {
                 .build();
     }
 
-    public void authenticateMember(Long memberId, Member.Role role) {
-        memberRepository.updateRoleById(memberId, role);
+    public void authenticateEmail(String emailAuthToken) {
+        Long memberId = jwtTokenService.extractMemberIdFromEmailAuthToken(emailAuthToken);
+        memberRepository.updateRoleByMemberTokenDto(memberId, Member.Role.MEMBER);
     }
 }
