@@ -1,6 +1,5 @@
 package jpcompany.smartwire2.common.encryptor;
 
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.encrypt.AesBytesEncryptor;
 import org.springframework.stereotype.Component;
