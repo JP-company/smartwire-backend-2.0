@@ -6,26 +6,15 @@ import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 
-import javax.sql.DataSource;
+@SpringBootTest
+class  MemberRepositoryJdbcTemplateTest {
 
-class MemberRepositoryJdbcTemplateTest {
-
-    private final DataSource dataSource = createDataSource();
-    public DataSource createDataSource() {
-        return new EmbeddedDatabaseBuilder()
-                .setType(EmbeddedDatabaseType.H2)
-                .addScript("classpath:schema.sql")
-                .setScriptEncoding("UTF-8")
-                .continueOnError(true)
-                .build();
-    }
-
-    private final MemberRepositoryJdbcTemplate memberRepositoryJdbcTemplate =
-            new MemberRepositoryJdbcTemplate(dataSource);
+    @Autowired
+    private MemberRepositoryJdbcTemplate memberRepositoryJdbcTemplate;
 
     @Test
     @DisplayName("정상 회원값 저장")
@@ -56,7 +45,7 @@ class MemberRepositoryJdbcTemplateTest {
     void saveDuplicatedEmail() {
         // given
         Member member = Member.initMember(
-                "wjsdj2008@naver.com",
+                "wjsdj2008@gmail.com",
                 "Qwertyuiop1!",
                 "JP-comapny"
         );
