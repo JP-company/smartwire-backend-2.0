@@ -1,7 +1,8 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
 import jpcompany.smartwire2.domain.Member;
-import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstant;
+import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
@@ -25,8 +26,8 @@ public class MemberRepositoryJdbcTemplate {
     public MemberRepositoryJdbcTemplate(DataSource dataSource) {
         this.template = new NamedParameterJdbcTemplate(dataSource);
         this.jdbcInsert = new SimpleJdbcInsert(dataSource)
-                .withTableName(MemberConstant.TABLE_NAME)
-                .usingGeneratedKeyColumns(MemberConstant.ID);
+                .withTableName(MemberConstantDB.TABLE_NAME)
+                .usingGeneratedKeyColumns(MemberConstantDB.ID);
     }
 
     public Long save(MemberJoinTransfer member) {
@@ -35,13 +36,13 @@ public class MemberRepositoryJdbcTemplate {
         return key.longValue();
     }
 
-    public void updateRoleById(Long memberId, Member.Role role) {
+    public void updateRoleByMemberTokenDto(Long memberId, Member.Role role) {
         String sql = "UPDATE members " +
                      "SET role=:role " +
                      "WHERE id=:id";
         Map<String, Object> param = Map.of(
-                MemberConstant.ID, memberId,
-                MemberConstant.ROLE, role.name()
+                MemberConstantDB.ID, memberId,
+                MemberConstantDB.ROLE, role.name()
         );
         template.update(sql, param);
     }
@@ -51,7 +52,7 @@ public class MemberRepositoryJdbcTemplate {
                      "FROM members " +
                      "WHERE login_email = :login_email";
         try {
-            Map<String, Object> param = Map.of(MemberConstant.LOGIN_EMAIL, encodedLoginEmail);
+            Map<String, Object> param = Map.of(MemberConstantDB.LOGIN_EMAIL, encodedLoginEmail);
             Member member = template.queryForObject(sql, param, MemberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
@@ -59,14 +60,13 @@ public class MemberRepositoryJdbcTemplate {
         }
     }
 
-    public Optional<Member> findByIdAndLoginEmail(Long id, String loginEmail) {
+    public Optional<Member> findById(Long id) {
         String sql = "SELECT * " +
                 "FROM members " +
-                "WHERE id = :id and login_email = :login_email";
+                "WHERE id = :id";
         try {
             Map<String, Object> param = Map.of(
-                    MemberConstant.LOGIN_EMAIL, loginEmail,
-                    MemberConstant.ID, id
+                    MemberConstantDB.ID, id
             );
             Member member = template.queryForObject(sql, param, MemberRowMapper());
             return Optional.ofNullable(member);
@@ -78,12 +78,12 @@ public class MemberRepositoryJdbcTemplate {
     private RowMapper<Member> MemberRowMapper() {
         return (rs, rowNum) ->
                 Member.builder()
-                        .id(rs.getLong(MemberConstant.ID))
-                        .loginEmail(rs.getString(MemberConstant.LOGIN_EMAIL))
-                        .loginPassword(rs.getString(MemberConstant.LOGIN_PASSWORD))
-                        .companyName(rs.getString(MemberConstant.COMPANY_NAME))
-                        .role(Member.Role.valueOf(rs.getString(MemberConstant.ROLE)))
-                        .createdDateTime(rs.getObject(MemberConstant.CREATED_DATE_TIME, LocalDateTime.class))
+                        .id(rs.getLong(MemberConstantDB.ID))
+                        .loginEmail(rs.getString(MemberConstantDB.LOGIN_EMAIL))
+                        .loginPassword(rs.getString(MemberConstantDB.LOGIN_PASSWORD))
+                        .companyName(rs.getString(MemberConstantDB.COMPANY_NAME))
+                        .role(Member.Role.valueOf(rs.getString(MemberConstantDB.ROLE)))
+                        .createdDateTime(rs.getObject(MemberConstantDB.CREATED_DATE_TIME, LocalDateTime.class))
                         .build();
     }
 }

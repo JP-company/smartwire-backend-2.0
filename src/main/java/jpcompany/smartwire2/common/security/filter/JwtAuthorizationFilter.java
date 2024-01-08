@@ -45,9 +45,9 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
         try {
             String jwtToken = jwtHeader.replace(JwtConstant.TOKEN_PREFIX, "");
-            MemberTokenDto memberTokenDto = jwtTokenService.extractMemberTokenDtoFrom(jwtToken);
+            Long memberId = jwtTokenService.extractMemberIdFromLoginAuthToken(jwtToken);
 
-            Member member = memberService.findMember(memberTokenDto.getId(), memberTokenDto.getLoginEmail());
+            Member member = memberService.findMember(memberId);
             PrincipalDetails principalDetails = new PrincipalDetails(member);
 
             Authentication authentication =

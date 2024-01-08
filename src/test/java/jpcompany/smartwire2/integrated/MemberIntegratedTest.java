@@ -33,19 +33,6 @@ public class MemberIntegratedTest {
     private final MemberJoinDto memberJoinDto = new MemberJoinDto();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @TestConfiguration
-    static class TestConfig {
-        @Bean
-        public DataSource dataSource() {
-            return new EmbeddedDatabaseBuilder()
-                    .setType(EmbeddedDatabaseType.H2)
-                    .addScript("classpath:schema.sql")
-                    .setScriptEncoding("UTF-8")
-                    .continueOnError(true)
-                    .build();
-        }
-    }
-
     @BeforeEach
     void beforeEach() {
         memberJoinDto.setLoginEmail("wjsdj2008@naver.com");
@@ -55,7 +42,7 @@ public class MemberIntegratedTest {
     }
 
     @Test
-    @DisplayName("회원가입 폼 정상 입력")
+    @DisplayName("회원가입_폼_정상_입력_200_OK")
     void joinFormReceive() throws Exception {
         mockMvc
                 .perform(
@@ -70,7 +57,7 @@ public class MemberIntegratedTest {
     }
 
     @ParameterizedTest
-    @DisplayName("잘못된 이메일 형식 입력")
+    @DisplayName("잘못된_이메일_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {"wjsdj2008", "wjsdj2008gmail.com", "wjsdj2008@", "@wksd.com", "wjsdj2008@.",""})
     void invalidEmailForm(String email) throws Exception {
         memberJoinDto.setLoginEmail(email);
@@ -89,7 +76,7 @@ public class MemberIntegratedTest {
 
 
     @ParameterizedTest
-    @DisplayName("잘못된 비밀번호 형식 입력")
+    @DisplayName("잘못된_비밀번호_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {"123", "123456789012345678901", "rkskekfk1!", "Arkskekfk!", "Arkskekfk1", "ARKSKEKFK1!","Arkske kfk1!", "", " "})
     void invalidPasswordForm(String password) throws Exception {
         memberJoinDto.setLoginPassword(password);
@@ -107,7 +94,7 @@ public class MemberIntegratedTest {
     }
 
     @ParameterizedTest
-    @DisplayName("비밀번호 확인 불일치")
+    @DisplayName("비밀번호_확인_불일치_400_BAD_REQUEST")
     @ValueSource(strings = {"123", "", " "})
     void incorrectPasswordVerify(String password) throws Exception {
         memberJoinDto.setLoginPasswordVerify(password);
@@ -125,7 +112,7 @@ public class MemberIntegratedTest {
     }
 
     @ParameterizedTest
-    @DisplayName("잘못된 회사 이름 형식 입력")
+    @DisplayName("잘못된_회사_이름_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {" ", "", "회사이름회사이름회사이름회사이름회사이름회"})
     void invalidCompanyNameForm(String companyName) throws Exception {
         memberJoinDto.setCompanyName(companyName);

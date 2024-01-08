@@ -2,12 +2,10 @@ package jpcompany.smartwire2.unit.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import jpcompany.smartwire2.common.error.dto.ErrorCodeDto;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.controller.MemberController;
 import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
 import jpcompany.smartwire2.controller.dto.request.validator.JoinValidator;
-import jpcompany.smartwire2.repository.jdbctemplate.ErrorCodeRepositoryJdbcTemplate;
 import jpcompany.smartwire2.service.MemberService;
 import jpcompany.smartwire2.service.dto.MemberJoinCommand;
 
@@ -21,18 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Optional;
-
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -51,8 +43,6 @@ class MemberControllerTest {
     private JoinValidator joinValidator;
     @SpyBean
     private JwtTokenService jwtTokenService;
-    @SpyBean
-    private ErrorCode.ErrorMessageInjector errorMessageInjector;
 
     private final MemberJoinDto memberJoinDto = new MemberJoinDto();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -65,24 +55,8 @@ class MemberControllerTest {
         memberJoinDto.setCompanyName("SIT");
     }
 
-    @TestConfiguration
-    static class MemberControllerTestConfig {
-        @Bean
-        public ErrorCodeRepositoryJdbcTemplate errorCodeRepository() {
-            ErrorCodeRepositoryJdbcTemplate mockRepository = mock(ErrorCodeRepositoryJdbcTemplate.class);
-            when(mockRepository.findByNameAndLocale(anyString(), anyString()))
-                    .thenAnswer(invocation -> {
-                        ErrorCodeDto errorCodeDto = new ErrorCodeDto();
-                        errorCodeDto.setReason("test");
-                        errorCodeDto.setHttpStatus(HttpStatus.BAD_REQUEST);
-                        return Optional.of(errorCodeDto);
-                    });
-            return mockRepository;
-        }
-    }
-
     @Test
-    @DisplayName("회원가입 폼 정상 입력_200_OK")
+    @DisplayName("회원가입 폼 정상 입력 200 OK")
     void join() throws Exception {
         // when
         ResultActions resultActions = mockMvc.perform(
@@ -100,7 +74,7 @@ class MemberControllerTest {
     }
 
     @Test
-    @DisplayName("서비스_예외_발생_처리_400_BAD_REQUEST")
+    @DisplayName("서비스 예외 발생 처리 400 BAD REQUEST")
     void exceptionHandle() throws Exception {
         // when
         doThrow(new IllegalArgumentException("213")).when(memberService).join(any(MemberJoinCommand.class));
@@ -119,7 +93,7 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("빈_이메일_입력값_400_BAD_REQUEST")
+    @DisplayName("빈 이메일 입력값 400 BAD REQUEST")
     @ValueSource(strings = {""," "})
     void invalidEmailForm(String email) throws Exception {
         // given
@@ -143,7 +117,7 @@ class MemberControllerTest {
 
 
     @ParameterizedTest
-    @DisplayName("빈_비밀번호_입력값_400_BAD_REQUEST")
+    @DisplayName("빈 비밀번호 입력값 400 BAD REQUEST")
     @ValueSource(strings = {"", " "})
     void invalidPasswordForm(String password) throws Exception {
         // given
@@ -166,7 +140,7 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("비밀번호_확인_불일치_400_BAD_REQUEST")
+    @DisplayName("비밀번호 확인 불일치 400 BAD REQUEST")
     @ValueSource(strings = {"123", "Qweasdzxc1!!", "", " "})
     void incorrectPasswordVerify(String password) throws Exception {
         // given
@@ -189,7 +163,7 @@ class MemberControllerTest {
     }
 
     @ParameterizedTest
-    @DisplayName("빈_회사이름_입력값_400_BAD_REQUEST")
+    @DisplayName("빈 회사이름 입력값 400 BAD REQUEST")
     @ValueSource(strings = {" ", ""})
     void invalidCompanyNameForm(String companyName) throws Exception {
         // given

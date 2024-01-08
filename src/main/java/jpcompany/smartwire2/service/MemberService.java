@@ -1,7 +1,10 @@
 package jpcompany.smartwire2.service;
 
+import jpcompany.smartwire2.common.email.EmailService;
+import jpcompany.smartwire2.common.email.TemplateEngineService;
 import jpcompany.smartwire2.common.encryptor.OneWayEncryptor;
 import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
+import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -15,7 +18,9 @@ import org.springframework.stereotype.Service;
 public class MemberService {
 
     private final MemberRepositoryJdbcTemplate memberRepository;
+    private final JwtTokenService jwtTokenService;
     private final EmailService emailService;
+    private final TemplateEngineService templateEngineService;
     private final OneWayEncryptor oneWayEncryptor;
     private final TwoWayEncryptor twoWayEncryptor;
 
@@ -27,7 +32,10 @@ public class MemberService {
         );
         MemberJoinTransfer encryptedMember = encryptMember(member);
         Long memberId = memberRepository.save(encryptedMember);
-        emailService.sendEmail(memberId, memberJoinCommand.getLoginEmail());
+
+        String emailAuthToken = jwtTokenService.createEmailAuthToken(memberId);
+        String emailContent = templateEngineService.setAuthEmailContext(emailAuthToken);
+        emailService.sendEmail(memberJoinCommand.getLoginEmail(), "스마트와이어 회원가입 인증 메일", emailContent);
     }
 
     private MemberJoinTransfer encryptMember(Member member) {
@@ -47,7 +55,7 @@ public class MemberService {
     public Member findMember(String loginEmail) {
         String encryptedLoginEmail = twoWayEncryptor.encrypt(loginEmail);
         Member member = memberRepository.findByLoginEmail(encryptedLoginEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("없는 이메일 계정"));
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
 
         String decryptedLoginEmail = twoWayEncryptor.decrypt(member.getLoginEmail());
         String decryptedCompanyName = twoWayEncryptor.decrypt(member.getCompanyName());
@@ -57,8 +65,8 @@ public class MemberService {
                 .build();
     }
 
-    public Member findMember(Long memberId, String encryptedLoginEmail) {
-        Member member = memberRepository.findByIdAndLoginEmail(memberId, encryptedLoginEmail)
+    public Member findMember(Long memberId) {
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalAccessError("유효하지 않은 계정 정보"));
 
         String decryptedLoginEmail = twoWayEncryptor.decrypt(member.getLoginEmail());
@@ -69,7 +77,8 @@ public class MemberService {
                 .build();
     }
 
-    public void authenticateMember(Long memberId, Member.Role role) {
-        memberRepository.updateRoleById(memberId, role);
+    public void authenticateEmail(String emailAuthToken) {
+        Long memberId = jwtTokenService.extractMemberIdFromEmailAuthToken(emailAuthToken);
+        memberRepository.updateRoleByMemberTokenDto(memberId, Member.Role.MEMBER);
     }
 }

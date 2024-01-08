@@ -2,7 +2,6 @@ package jpcompany.smartwire2.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
 import jpcompany.smartwire2.controller.dto.request.mapper.MemberCommandMapper;
 import jpcompany.smartwire2.controller.dto.request.validator.JoinValidator;
@@ -30,7 +29,6 @@ public class MemberController {
 
     private final JoinValidator joinValidator;
     private final MemberService memberService;
-    private final JwtTokenService jwtTokenService;
 
     @GetMapping("/")
     @ResponseBody
@@ -64,8 +62,7 @@ public class MemberController {
 
     @GetMapping("/email_verify/{authToken}")
     public String emailVerify(@PathVariable String authToken, Model model) {
-        Long memberId = jwtTokenService.extractMemberIdFrom(authToken);
-        memberService.authenticateMember(memberId, Member.Role.MEMBER);
+        memberService.authenticateEmail(authToken); // 인증 예외 발생 - 1. 토큰 검증 실패, 2. DB 업데이트 실패
         model.addAttribute("verified", "인증에 성공하였습니다.");
         return "email/result";
     }

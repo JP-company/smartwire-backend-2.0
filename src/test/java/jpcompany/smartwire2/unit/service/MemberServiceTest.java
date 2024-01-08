@@ -1,38 +1,33 @@
 package jpcompany.smartwire2.unit.service;
 
-import jpcompany.smartwire2.common.encryptor.OneWayEncryptor;
-import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
-import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
-import jpcompany.smartwire2.service.EmailService;
+import jpcompany.smartwire2.common.email.EmailService;
+import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.service.MemberService;
 import jpcompany.smartwire2.service.dto.MemberJoinCommand;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
-@ExtendWith(MockitoExtension.class)
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+@SpringBootTest
 class MemberServiceTest {
 
-    @InjectMocks
+    @Autowired
     private MemberService memberService;
-    @Mock
-    private MemberRepositoryJdbcTemplate memberRepositoryJdbcTemplate;
-    @Mock
+    @MockBean
     private EmailService emailService;
-    @Mock
-    private TwoWayEncryptor twoWayEncryptor;
-    @Mock
-    private OneWayEncryptor oneWayEncryptor;
+
 
     @Test
     @DisplayName("정상 회원가입 서비스 메서드 호출")
+    @Transactional
     void join() {
         // given
         MemberJoinCommand memberJoinCommand =
@@ -46,55 +41,40 @@ class MemberServiceTest {
         memberService.join(memberJoinCommand);
     }
 
-    @ParameterizedTest
-    @DisplayName("잘못된 이메일 형식 입력 시 예외 발생")
-    @ValueSource(strings = {"wjsdj2008", "wjsdj2008gmail.com", "wjsdj2008@", "@wksd.com", "wjsdj2008@.", "", " "})
-    void invalidInput(String email) {
+    @Test
+    @DisplayName("이메일로 계정 찾기, 비밀번호 암호화")
+    @Transactional
+    void test2() {
         // given
+        String loginEmail = "wjsdj2008@naver.com";
+        String loginPassword = "Qweasdzxc1!";
+        String companyName = "회사이름";
         MemberJoinCommand memberJoinCommand =
                 MemberJoinCommand.builder()
-                        .loginEmail(email)
-                        .loginPassword("Qweasdzxc1!")
-                        .companyName("회사이름")
-                        .build();
-
-        // when, then
-        Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @ParameterizedTest
-    @DisplayName("잘못된 비밀번호 형식 입력 시 예외 발생")
-    @ValueSource(strings = {"123", "123456789012345678901", "rkskekfk1!", "Arkskekfk!", "Arkskekfk1", "ARKSKEKFK1!","Arkske kfk1!", "", " "})
-    void invalidPasswordForm(String password) {
-        // given
-        MemberJoinCommand memberJoinCommand =
-                MemberJoinCommand.builder()
-                        .loginEmail("wjsdj2008@naver.com")
-                        .loginPassword(password)
-                        .companyName("회사이름")
-                        .build();
-
-        // when, then
-        Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
-                .isInstanceOf(IllegalArgumentException.class);
-    }
-
-
-    @ParameterizedTest
-    @DisplayName("잘못된 회사 이름 형식 입력 시 예외 발생")
-    @ValueSource(strings = {""," ", "회사이름회사이름회사이름회사이름회사이름회"})
-    void invalidCompanyNameForm(String companyName) {
-        // given
-        MemberJoinCommand memberJoinCommand =
-                MemberJoinCommand.builder()
-                        .loginEmail("wjsdj2008@naver.com")
-                        .loginPassword("Qweasdzxc1!")
+                        .loginEmail(loginEmail)
+                        .loginPassword(loginPassword)
                         .companyName(companyName)
                         .build();
+        memberService.join(memberJoinCommand);
+
+        // when
+        Member member = memberService.findMember(loginEmail);
+
+        // then
+        assertThat(member.getId()).isGreaterThan(0);
+        assertThat(member.getLoginEmail()).isEqualTo(loginEmail);
+        assertThat(member.getLoginPassword()).isNotEqualTo(loginPassword);
+        assertThat(member.getCompanyName()).isEqualTo(companyName);
+    }
+
+    @Test
+    @DisplayName("없는 이메일 조회 시 예외 발생")
+    void test3() {
+        // given
+        String loginEmail = "wjsdj2008@naver.com";
 
         // when, then
-        Assertions.assertThatThrownBy(() -> memberService.join(memberJoinCommand))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> memberService.findMember(loginEmail))
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 }

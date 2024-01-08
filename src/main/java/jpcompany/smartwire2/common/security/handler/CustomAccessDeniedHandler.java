@@ -11,18 +11,20 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException {
         response.setStatus(HttpStatus.FORBIDDEN.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
         ResponseDto responseDto = new ResponseDto(false, "Forbidden request", null);
-        String json = new ObjectMapper().writeValueAsString(responseDto);
+        String responseBody = new ObjectMapper().writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();
-        writer.write(json);
+        writer.write(responseBody);
         writer.flush();
     }
 }
