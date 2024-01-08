@@ -27,10 +27,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-jdbc'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 API
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	implementation 'com.h2database:h2' // h2 : implementation
-	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 API
 	implementation 'com.auth0:java-jwt:3.18.2' // jwt
 
 	compileOnly 'org.projectlombok:lombok'
@@ -38,6 +38,7 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 
 	annotationProcessor 'org.projectlombok:lombok'
+	testImplementation 'com.icegreen:greenmail:1.6.15'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testCompileOnly 'org.projectlombok:lombok'
