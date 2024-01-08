@@ -1,5 +1,6 @@
 package jpcompany.smartwire2.common.security.token;
 
+import jpcompany.smartwire2.controller.dto.request.MemberLoginDto;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -10,10 +11,10 @@ public class JwtAuthenticationToken extends AbstractAuthenticationToken {
     private final Object principal;
     private Object credentials;
 
-    public JwtAuthenticationToken(Object principal, Object credentials) {
+    public JwtAuthenticationToken(MemberLoginDto memberLoginDto) {
         super(null);
-        this.principal = principal;
-        this.credentials = credentials;
+        this.principal = memberLoginDto.getLoginEmail();
+        this.credentials = memberLoginDto.getLoginPassword();
         super.setAuthenticated(false);
     }
 
