@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
-import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
 import jpcompany.smartwire2.common.security.common.PrincipalDetails;
 import jpcompany.smartwire2.common.security.token.JwtAuthenticationToken;
 import jpcompany.smartwire2.domain.Member;

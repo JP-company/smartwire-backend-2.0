@@ -4,7 +4,6 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
-import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
 import jpcompany.smartwire2.domain.constant.MemberConstant;
 import org.springframework.stereotype.Service;
 
