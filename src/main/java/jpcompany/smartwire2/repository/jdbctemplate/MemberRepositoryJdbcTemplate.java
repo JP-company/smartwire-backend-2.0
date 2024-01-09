@@ -1,6 +1,5 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
-import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -30,8 +29,8 @@ public class MemberRepositoryJdbcTemplate {
                 .usingGeneratedKeyColumns(MemberConstantDB.ID);
     }
 
-    public Long save(MemberJoinTransfer member) {
-        SqlParameterSource param = new BeanPropertySqlParameterSource(member);
+    public Long save(MemberJoinTransfer memberJoinTransfer) {
+        SqlParameterSource param = new BeanPropertySqlParameterSource(memberJoinTransfer);
         Number key = jdbcInsert.executeAndReturnKey(param);
         return key.longValue();
     }

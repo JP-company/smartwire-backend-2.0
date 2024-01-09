@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-    private final String EMAIL_FROM = "스마트 와이어";
+    private final String EMAIL_FROM = "smartwire";
 
     public void sendEmail(String emailTo, String title, String content) {
         try {
