@@ -67,7 +67,7 @@ public class MemberService {
 
     public Member findMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalAccessError("유효하지 않은 계정 정보"));
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
 
         String decryptedLoginEmail = twoWayEncryptor.decrypt(member.getLoginEmail());
         String decryptedCompanyName = twoWayEncryptor.decrypt(member.getCompanyName());
