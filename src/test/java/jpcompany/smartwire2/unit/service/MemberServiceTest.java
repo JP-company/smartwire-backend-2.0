@@ -73,18 +73,21 @@ class MemberServiceTest {
     @Test
     @DisplayName("memberId로 계정 찾기")
     void test4() {
+        // given
+        Long memberId = 1L;
+
         // when
-        Member member = memberService.findMember(100L);
+        Member member = memberService.findMember(memberId);
 
         // then
-        assertThat(member.getId()).isEqualTo(100L);
+        assertThat(member.getId()).isEqualTo(memberId);
     }
 
     @Test
     @DisplayName("없는 memberId로 계정 조회 시 예외 발생")
     void test5() {
         // given
-        Long memberId = 523L;
+        Long memberId = 100000L;
 
         // when, then
         assertThatThrownBy(() -> memberService.findMember(memberId))
@@ -96,7 +99,7 @@ class MemberServiceTest {
     @Transactional
     void test6() {
         // given
-        String emailAuthToken = jwtTokenService.createEmailAuthToken(100L);
+        String emailAuthToken = jwtTokenService.createEmailAuthToken(1L);
 
         // when, then
         memberService.authenticateEmail(emailAuthToken);
@@ -119,7 +122,7 @@ class MemberServiceTest {
     @Transactional
     void test8() {
         // given
-        String emailAuthToken = jwtTokenService.createEmailAuthToken(1234L);
+        String emailAuthToken = jwtTokenService.createEmailAuthToken(100000L);
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.authenticateEmail(emailAuthToken))

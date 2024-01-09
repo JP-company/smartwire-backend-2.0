@@ -69,11 +69,14 @@ class  MemberRepositoryJdbcTemplateTest {
     @DisplayName("맴버 권한 업데이트")
     @Transactional
     void test3() {
+        // given
+        Long memberId = 2L;
+
         // when
-        memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(200L, Member.Role.MEMBER);
+        memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(memberId, Member.Role.MEMBER);
 
         // then
-        Member member = memberRepositoryJdbcTemplate.findById(200L)
+        Member member = memberRepositoryJdbcTemplate.findById(memberId)
                 .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
 
         Assertions.assertThat(member.getRole()).isEqualTo(Member.Role.MEMBER);
@@ -83,7 +86,7 @@ class  MemberRepositoryJdbcTemplateTest {
     @DisplayName("없는 맴버 권한 업데이트 시 예외 발생")
     void test5() {
         // when, then
-        Assertions.assertThatThrownBy(() -> memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(1234L, Member.Role.MEMBER))
+        Assertions.assertThatThrownBy(() -> memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(100000L, Member.Role.MEMBER))
                 .isInstanceOf(UsernameNotFoundException.class);
     }
 }
