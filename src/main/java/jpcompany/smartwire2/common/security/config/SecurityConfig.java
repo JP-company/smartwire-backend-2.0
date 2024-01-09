@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/login", "/join/**", "/email_verify/**").permitAll()
-                                .requestMatchers("/").hasAuthority(Member.Role.MEMBER.name())
+                                .requestMatchers("/login", "/join/**", "/email_verify/**").anonymous()
+                                .requestMatchers("/", "/api/**").hasAuthority(Member.Role.MEMBER.name())
                                 .requestMatchers("/admin/**").hasAuthority(Member.Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 )
