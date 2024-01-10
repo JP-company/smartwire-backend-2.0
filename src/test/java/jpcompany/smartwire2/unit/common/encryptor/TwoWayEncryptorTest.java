@@ -20,22 +20,28 @@ class TwoWayEncryptorTest {
     @Test
     @DisplayName("양방향 암호화 복호화 시 원문 반환")
     void encrypt() {
+        // given
         String originMessage = "secretData";
 
+        // when
         String encryptedMessage = twoWayEncryptor.encrypt(originMessage);
         String decryptedMessage = twoWayEncryptor.decrypt(encryptedMessage);
 
+        // then
         Assertions.assertThat(originMessage).isEqualTo(decryptedMessage);
     }
 
     @Test
     @DisplayName("깉은 원문에 같은 암호화 반환 대칭키 방식")
     void encrypt2() {
+        // given
         String originMessage = "secretData";
 
+        // when
         String encryptedMessage1 = twoWayEncryptor.encrypt(originMessage);
         String encryptedMessage2 = twoWayEncryptor.encrypt(originMessage);
 
+        // then
         Assertions.assertThat(encryptedMessage1).isEqualTo(encryptedMessage2);
     }
 }
