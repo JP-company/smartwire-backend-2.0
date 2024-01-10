@@ -1,9 +1,8 @@
 package jpcompany.smartwire2.integrated;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import org.junit.jupiter.api.BeforeEach;
+import lombok.Getter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -24,15 +23,15 @@ public class MemberIntegratedTest {
 
     @Autowired
     private MockMvc mockMvc;
-    private final MemberJoinDto memberJoinDto = new MemberJoinDto();
+    private final MemberJoinTestDto memberJoinDto = new MemberJoinTestDto();
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @BeforeEach
-    void beforeEach() {
-        memberJoinDto.setLoginEmail("wjsdj2008@naver.com");
-        memberJoinDto.setLoginPassword("Qweasdzxc1!");
-        memberJoinDto.setLoginPasswordVerify("Qweasdzxc1!");
-        memberJoinDto.setCompanyName("SIT");
+    @Getter
+    private static class MemberJoinTestDto {
+        private String loginEmail = "wjsdj2008@naver.com";
+        private String loginPassword = "Qweasdzxc1!";
+        private String loginPasswordVerify = "Qweasdzxc1!";
+        private String companyName = "회사이름";
     }
 
     @Test
@@ -54,7 +53,7 @@ public class MemberIntegratedTest {
     @DisplayName("잘못된_이메일_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {"wjsdj2008", "wjsdj2008gmail.com", "wjsdj2008@", "@wksd.com", "wjsdj2008@.",""})
     void invalidEmailForm(String email) throws Exception {
-        memberJoinDto.setLoginEmail(email);
+        memberJoinDto.loginEmail = email;
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
@@ -73,7 +72,7 @@ public class MemberIntegratedTest {
     @DisplayName("잘못된_비밀번호_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {"123", "123456789012345678901", "rkskekfk1!", "Arkskekfk!", "Arkskekfk1", "ARKSKEKFK1!","Arkske kfk1!", "", " "})
     void invalidPasswordForm(String password) throws Exception {
-        memberJoinDto.setLoginPassword(password);
+        memberJoinDto.loginPassword = password;
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
@@ -90,8 +89,8 @@ public class MemberIntegratedTest {
     @ParameterizedTest
     @DisplayName("비밀번호_확인_불일치_400_BAD_REQUEST")
     @ValueSource(strings = {"123", "", " "})
-    void incorrectPasswordVerify(String password) throws Exception {
-        memberJoinDto.setLoginPasswordVerify(password);
+    void incorrectPasswordVerify(String passwordVerify) throws Exception {
+        memberJoinDto.loginPasswordVerify = passwordVerify;
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
@@ -109,7 +108,7 @@ public class MemberIntegratedTest {
     @DisplayName("잘못된_회사_이름_형식_입력_400_BAD_REQUEST")
     @ValueSource(strings = {" ", "", "회사이름회사이름회사이름회사이름회사이름회"})
     void invalidCompanyNameForm(String companyName) throws Exception {
-        memberJoinDto.setCompanyName(companyName);
+        memberJoinDto.companyName = companyName;
         mockMvc
                 .perform(
                         MockMvcRequestBuilders
