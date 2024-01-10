@@ -3,7 +3,6 @@ package jpcompany.smartwire2.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
-import jpcompany.smartwire2.controller.dto.request.mapper.MemberCommandMapper;
 import jpcompany.smartwire2.controller.dto.request.validator.JoinValidator;
 import jpcompany.smartwire2.controller.dto.response.ResponseDto;
 import jpcompany.smartwire2.domain.Member;
@@ -30,18 +29,6 @@ public class MemberController {
     private final JoinValidator joinValidator;
     private final MemberService memberService;
 
-    @GetMapping("/")
-    @ResponseBody
-    public String get(@AuthenticationPrincipal Member member) {
-        return member.toString();
-    }
-
-    @GetMapping("/help")
-    @ResponseBody
-    public String help(@AuthenticationPrincipal Member member) {
-        return member.toString();
-    }
-
     @Operation(summary = "회원 가입 페이지 요청", description = "화원 가입을 요청합니다.")
     @PostMapping("/join")
     @ResponseBody
@@ -53,11 +40,26 @@ public class MemberController {
         }
 
         MemberJoinCommand memberJoinCommand =
-                MemberCommandMapper.mapToMemberJoinCommand(memberJoinDto);
+                MemberJoinDto.toMemberJoinCommand(memberJoinDto);
         memberService.join(memberJoinCommand);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseDto(true, null, null));
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public String get(@AuthenticationPrincipal Member member) {
+        return member.toString();
+    }
+
+    @GetMapping("/info")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> getMemberInfo(
+            @AuthenticationPrincipal Member member
+    ) {
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(new ResponseDto(true, null, member));
     }
 
     @GetMapping("/email_verify/{authToken}")
