@@ -25,6 +25,7 @@ import java.nio.charset.StandardCharsets;
 public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenService jwtTokenService;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(
@@ -36,14 +37,11 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         addTokenToHeader(response, member);
         setHeader(response);
-        setBody(response, member);
+        setBody(response);
     }
 
-    private void setBody(HttpServletResponse response, Member member) throws IOException {
-        ResponseDto responseDto = new ResponseDto(true, null, member);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+    private void setBody(HttpServletResponse response) throws IOException {
+        ResponseDto responseDto = new ResponseDto(true, null, null);
         String responseBody = objectMapper.writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();
