@@ -1,25 +1,19 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
 import jpcompany.smartwire2.domain.Machine;
-import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MachineConstantDB;
-import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MachineSetupTransfer;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.List;
 
 @Repository
 public class MachineRepositoryJdbcTemplate {
@@ -37,7 +31,7 @@ public class MachineRepositoryJdbcTemplate {
                         MachineConstantDB.DATE_MANUFACTURED,
                         MachineConstantDB.SEQUENCE,
                         MachineConstantDB.MEMBER_ID
-                        )
+                )
                 .usingGeneratedKeyColumns(MachineConstantDB.ID);
     }
 
@@ -58,37 +52,45 @@ public class MachineRepositoryJdbcTemplate {
                 WHERE id=:id and member_id=:member_id
                 """;
 
-        Map<String, Object> param = new HashMap<>();
-        param.put(MachineConstantDB.ID, machineSetupTransfer.getId());
-        param.put(MachineConstantDB.MACHINE_NAME, machineSetupTransfer.getMachineName());
-        param.put(MachineConstantDB.MACHINE_MODEL, machineSetupTransfer.getMachineModel());
-        param.put(MachineConstantDB.DATE_MANUFACTURED, machineSetupTransfer.getDateManufactured());
-        param.put(MachineConstantDB.SEQUENCE, machineSetupTransfer.getSequence());
-        param.put(MachineConstantDB.MEMBER_ID, machineSetupTransfer.getMemberId());
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue(MachineConstantDB.ID, machineSetupTransfer.getId())
+                .addValue(MachineConstantDB.MACHINE_NAME, machineSetupTransfer.getMachineName())
+                .addValue(MachineConstantDB.MACHINE_MODEL, machineSetupTransfer.getMachineModel())
+                .addValue(MachineConstantDB.DATE_MANUFACTURED, machineSetupTransfer.getDateManufactured())
+                .addValue(MachineConstantDB.SEQUENCE, machineSetupTransfer.getSequence())
+                .addValue(MachineConstantDB.MEMBER_ID, machineSetupTransfer.getMemberId());
 
         int update = template.update(sql, param);
         if (update < 1) {
-            throw new UsernameNotFoundException("유효하지 않은 계정 정보");
+            throw new IllegalStateException("유효하지 않은 기계 정보");
         }
     }
 
-    public Optional<Machine> findById(Long machineId) {
+    public void delete(Long machineId) {
+        String sql =
+                """
+                DELETE FROM machines
+                WHERE id=:id
+                """;
+
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue(MachineConstantDB.ID, machineId);
+        template.update(sql, param);
+    }
+
+    public List<Machine> findAllByMemberId(Long memberId) {
         String sql =
                 """
                 SELECT *
                 FROM machines
-                WHERE id=:id
+                WHERE member_id=:member_id
                 """;
-        try {
-            Map<String, Object> param = Map.of(MachineConstantDB.ID, machineId);
-            Machine machine = template.queryForObject(sql, param, MachineRowMapper());
-            return Optional.ofNullable(machine);
-        } catch (EmptyResultDataAccessException e) {
-            return Optional.empty();
-        }
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue(MachineConstantDB.MEMBER_ID, memberId);
+        return template.query(sql, param, machineRowMapper());
     }
 
-    private RowMapper<Machine> MachineRowMapper() {
+    private RowMapper<Machine> machineRowMapper() {
         return (rs, rowNum) ->
                 Machine.builder()
                         .id(rs.getLong(MachineConstantDB.ID))
