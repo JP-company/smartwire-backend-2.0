@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.security.token.JwtAuthenticationToken;
@@ -24,10 +25,10 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
             throws AuthenticationException, IOException {
         MemberLoginDto memberLoginDto;
         if (request.getParameter(MemberConstant.LOGIN_EMAIL) != null && request.getParameter(MemberConstant.LOGIN_PASSWORD) != null) {
-           memberLoginDto = MemberLoginDto.builder()
-                   .loginEmail(request.getParameter(MemberConstant.LOGIN_EMAIL))
-                   .loginPassword(request.getParameter(MemberConstant.LOGIN_PASSWORD))
-                   .build();
+           memberLoginDto = new MemberLoginDto(
+                   request.getParameter(MemberConstant.LOGIN_EMAIL),
+                   request.getParameter(MemberConstant.LOGIN_PASSWORD)
+           );
         } else {
             memberLoginDto = new ObjectMapper().readValue(request.getInputStream(), MemberLoginDto.class);
         }

@@ -1,12 +1,13 @@
 package jpcompany.smartwire2.controller.dto.request;
 
-import lombok.Builder;
+
 import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
-@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemberLoginDto {
     private String loginEmail;
     private String loginPassword;
