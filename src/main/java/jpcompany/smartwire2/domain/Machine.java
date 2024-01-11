@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @ToString
@@ -17,6 +18,8 @@ public class Machine {
     private LocalDate dateManufactured;
     private Integer sequence;
     private Boolean selected;
+    private List<Process> processes;
+    private List<Log> logs;
 
     public static Machine initMachine(
             Long id,
