@@ -1,7 +1,5 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
-import jpcompany.smartwire2.repository.jdbctemplate.constant.LogConstantDB;
-import jpcompany.smartwire2.repository.jdbctemplate.constant.MachineConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.ProcessConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.ProcessSaveTransfer;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -31,4 +29,27 @@ public class ProcessRepositoryJdbcTemplate {
         Number key = jdbcInsert.executeAndReturnKey(param);
         return key.longValue();
     }
+
+    public void updateFinishedDateTime(Long machineId, LocalDateTime finishedDateTime) {
+        String sql =
+                """
+                UPDATE processes
+                SET finished_date_time = :finished_date_time
+                WHERE id = (
+                    SELECT max(id)
+                    FROM processes
+                    WHERE machine_id = :machine_id
+                )
+                AND finished_date_time IS NULL
+                """;
+
+        MapSqlParameterSource param = new MapSqlParameterSource()
+                .addValue(ProcessConstantDB.MACHINE_ID, machineId)
+                .addValue(ProcessConstantDB.FINISHED_DATE_TIME, finishedDateTime);
+        int update = template.update(sql, param);
+        if (update < 1) {
+            throw new IllegalArgumentException("작업 종료 시간 설정 실패");
+        }
+    }
+
 }
