@@ -56,7 +56,7 @@ public class MemberRepositoryJdbcTemplate {
                      "WHERE login_email = :login_email";
         try {
             Map<String, Object> param = Map.of(MemberConstantDB.LOGIN_EMAIL, encodedLoginEmail);
-            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            Member member = template.queryForObject(sql, param, memberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -71,14 +71,14 @@ public class MemberRepositoryJdbcTemplate {
             Map<String, Object> param = Map.of(
                     MemberConstantDB.ID, id
             );
-            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            Member member = template.queryForObject(sql, param, memberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
-    private RowMapper<Member> MemberRowMapper() {
+    private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) ->
                 Member.builder()
                         .id(rs.getLong(MemberConstantDB.ID))
