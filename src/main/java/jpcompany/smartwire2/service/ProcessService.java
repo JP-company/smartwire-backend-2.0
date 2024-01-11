@@ -16,4 +16,11 @@ public class ProcessService {
         ProcessSaveTransfer processSaveTransfer = processSaveCommand.toProcessSaveTransfer();
         processRepositoryJdbcTemplate.save(processSaveTransfer);
     }
+
+    public void finishProcess(ProcessSaveCommand processSaveCommand) {
+        processRepositoryJdbcTemplate.updateFinishedDateTime(
+                processSaveCommand.getMachineId(),
+                processSaveCommand.getLogDateTime()
+        );
+    }
 }
