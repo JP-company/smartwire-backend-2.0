@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.repository.jdbctemplate.constant;
 
 public interface ProcessConstantDB {
+    String TABLE_NAME = "processes";
     String ID = "id";
     String FILE_NAME = "file_name";
     String THICKNESS = "thickness";

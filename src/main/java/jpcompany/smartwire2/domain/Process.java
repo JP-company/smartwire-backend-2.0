@@ -1,15 +1,18 @@
-package jpcompany.smartwire2.repository.jdbctemplate.dto;
+package jpcompany.smartwire2.domain;
 
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
-public class ProcessSaveTransfer {
+public class Process {
+    private Long id;
     private String fileName;
     private Float thickness;
     private LocalDateTime startedDateTime;
-    private Long machineId;
+    private LocalDateTime finishedDateTime;
+    private List<Log> logs;
 }
