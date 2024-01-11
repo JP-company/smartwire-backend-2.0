@@ -16,13 +16,13 @@ public class MachineSetupDto {
     @NotBlank
     private int sequence;
 
-    public static MachineSetupCommand toMachineSetupCommand(MachineSetupDto machineSetupDto) {
+    public MachineSetupCommand toMachineSetupCommand() {
         return MachineSetupCommand.builder()
-                .id(machineSetupDto.id)
-                .machineName(machineSetupDto.machineName)
-                .machineModel(machineSetupDto.machineModel)
-                .dateManufactured(machineSetupDto.dateManufactured)
-                .sequence(machineSetupDto.sequence)
+                .id(id)
+                .machineName(machineName)
+                .machineModel(machineModel)
+                .dateManufactured(dateManufactured)
+                .sequence(sequence)
                 .build();
     }
 }
