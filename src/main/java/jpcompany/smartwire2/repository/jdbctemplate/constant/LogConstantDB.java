@@ -6,5 +6,5 @@ public interface LogConstantDB {
     String LOG_NAME = "log_name";
     String LOG_DATE_TIME = "log_date_time";
     String MACHINE_ID = "machine_id";
-    String PROCESS_ID = "processId";
+    String PROCESS_ID = "process_id";
 }

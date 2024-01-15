@@ -56,8 +56,6 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (IllegalAccessError | TokenExpiredException | SignatureVerificationException e) {
-            e.printStackTrace();
-            log.info("사용자 인증 실패 = {}", e.getMessage());
             filterChain.doFilter(request, response);
         }
     }
