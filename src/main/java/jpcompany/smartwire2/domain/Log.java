@@ -11,4 +11,5 @@ public class Log {
     private Long id;
     private String logName;
     private LocalDateTime logDateTime;
+    private Long processId;
 }

@@ -14,15 +14,17 @@ public class LogService {
     private final LogRepositoryJdbcTemplate logRepositoryJdbcTemplate;
     private final ProcessService processService;
 
+
     public void saveLog(LogSaveCommand logSaveCommand, ProcessSaveCommand processSaveCommand) {
+        if (processSaveCommand.isNotEmpty()) {
+            processService.saveProcess(processSaveCommand);
+        }
+
         LogSaveTransfer logSaveTransfer = logSaveCommand.toLogSaveTransfer();
         logRepositoryJdbcTemplate.save(logSaveTransfer);
 
         if (logSaveCommand.isFinished()) {
             processService.finishProcess(processSaveCommand);
-        }
-        if (processSaveCommand.isNotEmpty()) {
-            processService.saveProcess(processSaveCommand);
         }
     }
 }
