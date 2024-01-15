@@ -62,7 +62,7 @@ INSERT INTO members VALUES (DEFAULT, 'FBGpx7QTvQ+2vuzMtAvUYT2/UegU7KbhUTlWjnF1xG
 
 INSERT INTO machines VALUES (DEFAULT, '1호기', 'sss', null, 0, DEFAULT, 1);
 
-INSERT INTO processes VALUES (DEFAULT, '123.NC', 23.5, '2024-01-10 17:08:05', null, 1);
-
-INSERT INTO logs VALUES (DEFAULT, '작업 시작', '2024-01-10 17:08:05', 1, 1),
-                        (DEFAULT, 'M코드 정지', '2024-01-10 17:14:21', 1, 1);
+-- INSERT INTO processes VALUES (DEFAULT, '123.NC', 23.5, '2024-01-10 17:08:05', null, 1);
+--
+-- INSERT INTO logs VALUES (DEFAULT, '작업 시작', '2024-01-10 17:08:05', 1, 1),
+--                         (DEFAULT, 'M코드 정지', '2024-01-10 17:14:21', 1, 1);
