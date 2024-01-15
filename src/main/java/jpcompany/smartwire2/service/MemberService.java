@@ -4,14 +4,16 @@ import jpcompany.smartwire2.common.email.EmailService;
 import jpcompany.smartwire2.common.email.TemplateEngineService;
 import jpcompany.smartwire2.common.encryptor.OneWayEncryptor;
 import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
+import jpcompany.smartwire2.common.error.CustomException;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
 import jpcompany.smartwire2.service.dto.MemberJoinCommand;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import static jpcompany.smartwire2.common.error.ErrorCode.INVALID_MEMBER;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +57,7 @@ public class MemberService {
     public Member findMember(String loginEmail) {
         String encryptedLoginEmail = twoWayEncryptor.encrypt(loginEmail);
         Member member = memberRepository.findByLoginEmail(encryptedLoginEmail)
-                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
+                .orElseThrow(() -> new CustomException(INVALID_MEMBER));
 
         String decryptedLoginEmail = twoWayEncryptor.decrypt(member.getLoginEmail());
         String decryptedCompanyName = twoWayEncryptor.decrypt(member.getCompanyName());
@@ -67,7 +69,7 @@ public class MemberService {
 
     public Member findMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
+                .orElseThrow(() -> new CustomException(INVALID_MEMBER));
 
         String decryptedLoginEmail = twoWayEncryptor.decrypt(member.getLoginEmail());
         String decryptedCompanyName = twoWayEncryptor.decrypt(member.getCompanyName());

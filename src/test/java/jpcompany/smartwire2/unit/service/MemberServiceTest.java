@@ -1,7 +1,8 @@
 package jpcompany.smartwire2.unit.service;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
 import jpcompany.smartwire2.common.email.EmailService;
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.service.MemberService;
@@ -12,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,7 +67,8 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.findMember(loginEmail))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_MEMBER.getReason());
     }
 
     @Test
@@ -91,7 +92,8 @@ class MemberServiceTest {
 
         // when, then
         assertThatThrownBy(() -> memberService.findMember(memberId))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_MEMBER.getReason());
     }
 
     @Test
@@ -114,7 +116,8 @@ class MemberServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.authenticateEmail(emailAuthToken))
-                .isInstanceOf(JWTDecodeException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getReason());
     }
 
     @Test
@@ -126,6 +129,7 @@ class MemberServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberService.authenticateEmail(emailAuthToken))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_MEMBER.getReason());
     }
 }

@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.unit.service;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.service.MachineService;
 import jpcompany.smartwire2.service.dto.MachineSetupCommand;
@@ -13,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -90,7 +91,8 @@ class MachineServiceTest {
 
         // when, then
         assertThatThrownBy(() -> machineService.setup(machinesSetupForm, memberId))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.UPDATE_FAILED_MACHINE_INFO.getReason());
     }
 
     @Test
@@ -109,7 +111,8 @@ class MachineServiceTest {
 
         // when, then
         assertThatThrownBy(() -> machineService.setup(machinesSetupForm, memberId))
-                .isInstanceOf(DuplicateFormatFlagsException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.DUPLICATED_MACHINE_NAME.getReason());
     }
 
     @Test
@@ -128,6 +131,7 @@ class MachineServiceTest {
 
         // when, then
         assertThatThrownBy(() -> machineService.setup(machinesSetupForm, memberId))
-                .isInstanceOf(DuplicateFormatFlagsException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.DUPLICATED_MACHINE_SEQUENCE.getReason());
     }
 }

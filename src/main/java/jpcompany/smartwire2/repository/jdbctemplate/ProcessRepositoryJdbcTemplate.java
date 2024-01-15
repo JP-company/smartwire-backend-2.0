@@ -1,8 +1,11 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Process;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.ProcessConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.ProcessSaveTransfer;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
@@ -40,19 +43,23 @@ public class ProcessRepositoryJdbcTemplate {
                 UPDATE processes
                 SET finished_date_time = :finished_date_time
                 WHERE id = (
-                    SELECT max(id)
-                    FROM processes
-                    WHERE machine_id = :machine_id
+                    SELECT max_id FROM (
+                        SELECT MAX(p1.id) AS max_id
+                        FROM processes AS p1
+                        WHERE p1.machine_id = :machine_id
+                    ) AS sub
                 )
-                AND finished_date_time IS NULL
+                AND finished_date_time IS NULL;
                 """;
 
         MapSqlParameterSource param = new MapSqlParameterSource()
                 .addValue(ProcessConstantDB.MACHINE_ID, machineId)
                 .addValue(ProcessConstantDB.FINISHED_DATE_TIME, finishedDateTime);
-        int update = template.update(sql, param);
-        if (update < 1) {
-            throw new IllegalArgumentException("작업 종료 시간 설정 실패");
+
+        try {
+            template.update(sql, param);
+        } catch (DataAccessException e) {
+            throw new CustomException(ErrorCode.UPDATE_FAILED_PROCESS_FINISHED_TIME);
         }
     }
 

@@ -1,9 +1,7 @@
 package jpcompany.smartwire2.unit.common.jwt;
 
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
-import com.auth0.jwt.exceptions.TokenExpiredException;
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -27,10 +25,12 @@ class JwtTokenServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> jwtTokenService.extractMemberIdFromLoginAuthToken(emailAuthToken))
-                .isInstanceOf(JWTVerificationException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getReason());
 
         Assertions.assertThatThrownBy(() -> jwtTokenService.extractMemberIdFromEmailAuthToken(loginAuthToken))
-                .isInstanceOf(JWTVerificationException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getReason());
     }
 
     @Test
@@ -54,8 +54,10 @@ class JwtTokenServiceTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> jwtTokenService.extractMemberIdFromEmailAuthToken(authToken))
-                .isInstanceOf(JWTVerificationException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getReason());
         Assertions.assertThatThrownBy(() -> jwtTokenService.extractMemberIdFromLoginAuthToken(authToken))
-                .isInstanceOf(JWTVerificationException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_TOKEN.getReason());
     }
 }

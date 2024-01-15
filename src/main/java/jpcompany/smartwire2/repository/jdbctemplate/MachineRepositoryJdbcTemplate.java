@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MachineConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MachineSetupTransfer;
@@ -62,7 +64,7 @@ public class MachineRepositoryJdbcTemplate {
 
         int update = template.update(sql, param);
         if (update < 1) {
-            throw new IllegalStateException("유효하지 않은 기계 정보");
+            throw new CustomException(ErrorCode.UPDATE_FAILED_MACHINE_INFO);
         }
     }
 

@@ -3,8 +3,8 @@ package jpcompany.smartwire2.common.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.controller.dto.response.ResponseDto;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -13,14 +13,15 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
-public class CustomLoginAuthenticationEntryPoint implements AuthenticationEntryPoint {
+public class CustomUnAuthenticationHandler implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException {
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        ErrorCode unauthenticated = ErrorCode.UNAUTHENTICATED;
+        response.setStatus(unauthenticated.getHttpStatusValue());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        ResponseDto responseDto = new ResponseDto(false, "Unauthorized request", null);
+        ResponseDto responseDto = new ResponseDto(false, unauthenticated.getReason(), null);
         String json = new ObjectMapper().writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();

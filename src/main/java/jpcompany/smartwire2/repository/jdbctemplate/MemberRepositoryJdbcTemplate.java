@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -9,7 +11,6 @@ import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
@@ -46,7 +47,7 @@ public class MemberRepositoryJdbcTemplate {
         );
         int update = template.update(sql, param);
         if (update < 1) {
-            throw new UsernameNotFoundException("유효하지 않은 계정 정보");
+            throw new CustomException(ErrorCode.INVALID_MEMBER);
         }
     }
 

@@ -1,18 +1,19 @@
 package jpcompany.smartwire2.domain.validator;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Machine;
 
-import java.util.DuplicateFormatFlagsException;
 import java.util.List;
 
 public class MachinesValidator {
 
     public void validate(List<Machine> machinesForm) {
         if (isMachineNameDuplicated(machinesForm)) {
-            throw new DuplicateFormatFlagsException("기계 이름은 중복될 수 없습니다.");
+            throw new CustomException(ErrorCode.DUPLICATED_MACHINE_NAME);
         }
         if (isSequenceDuplicated(machinesForm)) {
-            throw new DuplicateFormatFlagsException("기계 나열 순서는 중복될 수 없습니다.");
+            throw new CustomException(ErrorCode.DUPLICATED_MACHINE_SEQUENCE);
         }
     }
 

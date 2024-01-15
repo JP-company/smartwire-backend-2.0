@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.unit.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -87,6 +89,7 @@ class  MemberRepositoryJdbcTemplateTest {
     void test5() {
         // when, then
         Assertions.assertThatThrownBy(() -> memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(100000L, Member.Role.MEMBER))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_MEMBER.getReason());
     }
 }

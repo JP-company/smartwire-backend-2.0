@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.unit.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.repository.jdbctemplate.MachineRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MachineSetupTransfer;
@@ -121,7 +123,8 @@ class MachineRepositoryJdbcTemplateTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> machineRepositoryJdbcTemplate.update(machineSetupTransfer))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.UPDATE_FAILED_MACHINE_INFO.getReason());
     }
 
     @Test
@@ -146,7 +149,8 @@ class MachineRepositoryJdbcTemplateTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> machineRepositoryJdbcTemplate.update(machineSetupTransfer))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.UPDATE_FAILED_MACHINE_INFO.getReason());
     }
 
 
