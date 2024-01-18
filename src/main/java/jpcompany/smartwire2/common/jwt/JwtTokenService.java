@@ -3,8 +3,9 @@ package jpcompany.smartwire2.common.jwt;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
-import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
 import jpcompany.smartwire2.domain.constant.MemberConstant;
 import org.springframework.stereotype.Service;
 
@@ -27,18 +28,25 @@ public class JwtTokenService {
     }
 
     public Long extractMemberIdFromEmailAuthToken(String authToken) {
-        DecodedJWT decodedJWT =
-                JWT.require(Algorithm.HMAC512(JwtConstant.MAIL_TOKEN_SECRET)).build()
-                .verify(authToken); // TokenExpiredException 유효 시간, SignatureVerificationException 시그니쳐
-
-        return decodedJWT.getClaim(MemberConstant.ID).asLong();
+        try {
+            DecodedJWT decodedJWT =
+                    JWT.require(Algorithm.HMAC512(JwtConstant.MAIL_TOKEN_SECRET)).build()
+                            .verify(authToken); // TokenExpiredException 유효 시간, SignatureVerificationException 시그니쳐
+            return decodedJWT.getClaim(MemberConstant.ID).asLong();
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.INVALID_TOKEN, e);
+        }
     }
 
     public Long extractMemberIdFromLoginAuthToken(String authToken) {
-        DecodedJWT decodedJWT =
-                JWT.require(Algorithm.HMAC512(JwtConstant.LOGIN_TOKEN_SECRET)).build()
-                        .verify(authToken); // TokenExpiredException 유효 시간, SignatureVerificationException 시그니쳐
-
-        return decodedJWT.getClaim(MemberConstant.ID).asLong();
+        try {
+            DecodedJWT decodedJWT =
+                    JWT.require(Algorithm.HMAC512(JwtConstant.LOGIN_TOKEN_SECRET)).build()
+                    .verify(authToken); // TokenExpiredException 유효 시간, SignatureVerificationException 시그니쳐
+            return decodedJWT.getClaim(MemberConstant.ID).asLong();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new CustomException(ErrorCode.INVALID_TOKEN, e);
+        }
     }
 }

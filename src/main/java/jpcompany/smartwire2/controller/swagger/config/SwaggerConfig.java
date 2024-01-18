@@ -1,4 +1,4 @@
-package jpcompany.smartwire2.common.swagger.config;
+package jpcompany.smartwire2.controller.swagger.config;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;

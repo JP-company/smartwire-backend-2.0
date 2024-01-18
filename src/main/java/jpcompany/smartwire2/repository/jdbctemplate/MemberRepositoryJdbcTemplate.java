@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
-import jpcompany.smartwire2.common.jwt.dto.MemberTokenDto;
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.MemberConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -30,8 +31,8 @@ public class MemberRepositoryJdbcTemplate {
                 .usingGeneratedKeyColumns(MemberConstantDB.ID);
     }
 
-    public Long save(MemberJoinTransfer member) {
-        SqlParameterSource param = new BeanPropertySqlParameterSource(member);
+    public Long save(MemberJoinTransfer memberJoinTransfer) {
+        SqlParameterSource param = new BeanPropertySqlParameterSource(memberJoinTransfer);
         Number key = jdbcInsert.executeAndReturnKey(param);
         return key.longValue();
     }
@@ -44,7 +45,10 @@ public class MemberRepositoryJdbcTemplate {
                 MemberConstantDB.ID, memberId,
                 MemberConstantDB.ROLE, role.name()
         );
-        template.update(sql, param);
+        int update = template.update(sql, param);
+        if (update < 1) {
+            throw new CustomException(ErrorCode.INVALID_MEMBER);
+        }
     }
 
     public Optional<Member> findByLoginEmail(String encodedLoginEmail) {
@@ -53,7 +57,7 @@ public class MemberRepositoryJdbcTemplate {
                      "WHERE login_email = :login_email";
         try {
             Map<String, Object> param = Map.of(MemberConstantDB.LOGIN_EMAIL, encodedLoginEmail);
-            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            Member member = template.queryForObject(sql, param, memberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
@@ -68,14 +72,14 @@ public class MemberRepositoryJdbcTemplate {
             Map<String, Object> param = Map.of(
                     MemberConstantDB.ID, id
             );
-            Member member = template.queryForObject(sql, param, MemberRowMapper());
+            Member member = template.queryForObject(sql, param, memberRowMapper());
             return Optional.ofNullable(member);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
-    private RowMapper<Member> MemberRowMapper() {
+    private RowMapper<Member> memberRowMapper() {
         return (rs, rowNum) ->
                 Member.builder()
                         .id(rs.getLong(MemberConstantDB.ID))

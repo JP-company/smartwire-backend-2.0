@@ -1,0 +1,28 @@
+package jpcompany.smartwire2.controller.dto.request;
+
+import jakarta.validation.constraints.NotBlank;
+import jpcompany.smartwire2.service.dto.MachineSetupCommand;
+import lombok.Getter;
+
+import java.time.LocalDate;
+
+@Getter
+public class MachineSetupDto {
+    private Long id;
+    @NotBlank
+    private String machineName;
+    private String machineModel;
+    private LocalDate dateManufactured;
+    @NotBlank
+    private int sequence;
+
+    public MachineSetupCommand toMachineSetupCommand() {
+        return MachineSetupCommand.builder()
+                .id(id)
+                .machineName(machineName)
+                .machineModel(machineModel)
+                .dateManufactured(dateManufactured)
+                .sequence(sequence)
+                .build();
+    }
+}

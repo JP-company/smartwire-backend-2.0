@@ -1,5 +1,7 @@
 package jpcompany.smartwire2.unit.repository.jdbctemplate;
 
+import jpcompany.smartwire2.common.error.CustomException;
+import jpcompany.smartwire2.common.error.ErrorCode;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.repository.jdbctemplate.MemberRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.MemberJoinTransfer;
@@ -9,6 +11,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 class  MemberRepositoryJdbcTemplateTest {
@@ -18,12 +22,13 @@ class  MemberRepositoryJdbcTemplateTest {
 
     @Test
     @DisplayName("정상 회원값 저장")
+    @Transactional
     void save() {
         // given
         Member member = Member.initMember(
-                "wjsdj2008@naver.com",
+                "wjsdj2008@n123ate.com",
                 "Qwertyuiop1!",
-                "JP-comapny"
+                "JP-company"
         );
         MemberJoinTransfer memberJoinTransfer = MemberJoinTransfer.builder()
                         .loginEmail(member.getLoginEmail())
@@ -50,16 +55,41 @@ class  MemberRepositoryJdbcTemplateTest {
                 "JP-comapny"
         );
         MemberJoinTransfer memberJoinTransfer = MemberJoinTransfer.builder()
-                .loginEmail(member.getLoginEmail())
+                .loginEmail("FBGpx7QTvQ+2vuzMtAvUYT2/UegU7KbhUTlWjnF1xGw=")
                 .loginPassword(member.getLoginPassword())
                 .companyName(member.getCompanyName())
                 .role(member.getRole())
                 .createdDateTime(member.getCreatedDateTime())
                 .build();
-        memberRepositoryJdbcTemplate.save(memberJoinTransfer);
 
         // when, then
         Assertions.assertThatThrownBy(() -> memberRepositoryJdbcTemplate.save(memberJoinTransfer))
                 .isInstanceOf(DuplicateKeyException.class);
+    }
+
+    @Test
+    @DisplayName("맴버 권한 업데이트")
+    @Transactional
+    void test3() {
+        // given
+        Long memberId = 2L;
+
+        // when
+        memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(memberId, Member.Role.MEMBER);
+
+        // then
+        Member member = memberRepositoryJdbcTemplate.findById(memberId)
+                .orElseThrow(() -> new UsernameNotFoundException("유효하지 않은 계정 정보"));
+
+        Assertions.assertThat(member.getRole()).isEqualTo(Member.Role.MEMBER);
+    }
+
+    @Test
+    @DisplayName("없는 맴버 권한 업데이트 시 예외 발생")
+    void test5() {
+        // when, then
+        Assertions.assertThatThrownBy(() -> memberRepositoryJdbcTemplate.updateRoleByMemberTokenDto(100000L, Member.Role.MEMBER))
+                .isInstanceOf(CustomException.class)
+                .hasMessage(ErrorCode.INVALID_MEMBER.getReason());
     }
 }

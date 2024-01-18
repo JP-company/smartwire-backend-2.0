@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jpcompany.smartwire2.common.encryptor.TwoWayEncryptor;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
 import jpcompany.smartwire2.controller.dto.response.ResponseDto;
@@ -26,7 +25,7 @@ import java.nio.charset.StandardCharsets;
 public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtTokenService jwtTokenService;
-    private final TwoWayEncryptor twoWayEncryptor;
+    private final ObjectMapper objectMapper;
 
     @Override
     public void onAuthenticationSuccess(
@@ -38,14 +37,11 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
 
         addTokenToHeader(response, member);
         setHeader(response);
-        setBody(response, member);
+        setBody(response);
     }
 
-    private void setBody(HttpServletResponse response, Member member) throws IOException {
-        ResponseDto responseDto = new ResponseDto(true, null, member);
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
+    private void setBody(HttpServletResponse response) throws IOException {
+        ResponseDto responseDto = new ResponseDto(true, null, null);
         String responseBody = objectMapper.writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();

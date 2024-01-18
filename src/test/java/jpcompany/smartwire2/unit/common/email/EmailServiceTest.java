@@ -1,4 +1,4 @@
-package jpcompany.smartwire2.unit.service;
+package jpcompany.smartwire2.unit.common.email;
 
 import com.icegreen.greenmail.util.GreenMail;
 import com.icegreen.greenmail.util.GreenMailUtil;

@@ -11,16 +11,14 @@ import org.springframework.stereotype.Service;
 public class EmailService {
 
     private final JavaMailSender javaMailSender;
-
-//    @Value("${email.from}")
-//    String emailFrom;
+    private final String EMAIL_FROM = "smartwire";
 
     public void sendEmail(String emailTo, String title, String content) {
         try {
             MimeMessage emailForm = javaMailSender.createMimeMessage();
             emailForm.addRecipients(MimeMessage.RecipientType.TO, emailTo);
             emailForm.setSubject(title);
-            emailForm.setFrom("emailFrom");
+            emailForm.setFrom(EMAIL_FROM);
             emailForm.setText(content, "utf-8", "html");
             javaMailSender.send(emailForm);
         } catch (MessagingException e) {

@@ -2,7 +2,7 @@ package jpcompany.smartwire2.common.security.config;
 
 import jpcompany.smartwire2.common.security.filter.JwtAuthorizationFilter;
 import jpcompany.smartwire2.common.security.handler.CustomAccessDeniedHandler;
-import jpcompany.smartwire2.common.security.handler.CustomLoginAuthenticationEntryPoint;
+import jpcompany.smartwire2.common.security.handler.CustomUnAuthenticationHandler;
 import jpcompany.smartwire2.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -38,14 +38,15 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/login", "/join/**", "/email_verify/**").permitAll()
-                                .requestMatchers("/").hasAuthority(Member.Role.MEMBER.name())
+                                .requestMatchers("/error-test").permitAll()
+                                .requestMatchers("/login", "/join/**", "/email_verify/**").anonymous()
+                                .requestMatchers("/", "/api/**").hasAuthority(Member.Role.MEMBER.name())
                                 .requestMatchers("/admin/**").hasAuthority(Member.Role.ADMIN.name())
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptionConfig ->
                         exceptionConfig
-                                .authenticationEntryPoint(new CustomLoginAuthenticationEntryPoint())
+                                .authenticationEntryPoint(new CustomUnAuthenticationHandler())
                                 .accessDeniedHandler(new CustomAccessDeniedHandler())
                 )
                 .sessionManagement(sessionManagement ->
