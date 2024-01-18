@@ -1,7 +1,8 @@
 package jpcompany.smartwire2.repository.jdbctemplate;
 
-import jpcompany.smartwire2.domain.Log;
+import jpcompany.smartwire2.domain.MachineStatus;
 import jpcompany.smartwire2.repository.jdbctemplate.constant.LogConstantDB;
+import jpcompany.smartwire2.repository.jdbctemplate.constant.ProcessConstantDB;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.LogSaveTransfer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -49,34 +50,49 @@ public class LogRepositoryJdbcTemplate {
         return Objects.requireNonNull(keyHolder.getKey()).longValue();
     }
 
-    public Optional<Log> findRecentLogByMachineId(Long machineId) {
+    public Optional<MachineStatus> findMachineStatusByMachineId(Long machineId) {
         String sql =
                 """
-                SELECT *
-                FROM logs
-                WHERE id = (
-                    SELECT MAX(id)
+                WITH recent_log AS (
+                    SELECT machine_id, log_name, log_date_time, process_id
                     FROM logs
-                    WHERE machine_id = :machine_id
+                    WHERE id = (
+                        SELECT max(id)
+                        FROM logs
+                        WHERE machine_id = :machine_id
+                    )
+                ),
+                recent_process AS (
+                    SELECT file_name
+                    FROM processes
+                    WHERE id IN (
+                        SELECT process_id
+                        FROM recent_log
+                        WHERE process_id IS NOT NULL
+                    )
+                    AND finished_date_time IS NULL
                 )
+                SELECT machine_id, log_name, log_date_time, file_name
+                FROM recent_log LEFT JOIN recent_process
+                ON TRUE;
                 """;
         try {
             MapSqlParameterSource param = new MapSqlParameterSource()
                     .addValue(LogConstantDB.MACHINE_ID, machineId);
-            Log log = template.queryForObject(sql, param, logRowMapper());
-            return Optional.ofNullable(log);
+            MachineStatus machineStatus = template.queryForObject(sql, param, machineStatusRowMapper());
+            return Optional.ofNullable(machineStatus);
         } catch (EmptyResultDataAccessException e) {
             return Optional.empty();
         }
     }
 
-    private RowMapper<Log> logRowMapper() {
+    private RowMapper<MachineStatus> machineStatusRowMapper() {
         return (rs, rowNum) ->
-                Log.builder()
-                        .id(rs.getLong(LogConstantDB.ID))
-                        .logName(rs.getString(LogConstantDB.LOG_NAME))
-                        .logDateTime(rs.getObject(LogConstantDB.LOG_DATE_TIME, LocalDateTime.class))
-                        .processId(rs.getLong(LogConstantDB.PROCESS_ID))
-                        .build();
+            MachineStatus.builder()
+                    .machineId(rs.getLong(LogConstantDB.MACHINE_ID))
+                    .logName(rs.getString(LogConstantDB.LOG_NAME))
+                    .logDateTime(rs.getObject(LogConstantDB.LOG_DATE_TIME, LocalDateTime.class))
+                    .fileName(rs.getString(ProcessConstantDB.FILE_NAME))
+                    .build();
     }
 }
