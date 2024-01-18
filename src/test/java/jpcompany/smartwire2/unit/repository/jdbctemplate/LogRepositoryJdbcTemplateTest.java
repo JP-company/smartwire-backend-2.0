@@ -1,6 +1,6 @@
 package jpcompany.smartwire2.unit.repository.jdbctemplate;
 
-import jpcompany.smartwire2.domain.Log;
+import jpcompany.smartwire2.domain.MachineStatus;
 import jpcompany.smartwire2.repository.jdbctemplate.LogRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.ProcessRepositoryJdbcTemplate;
 import jpcompany.smartwire2.repository.jdbctemplate.dto.LogSaveTransfer;
@@ -27,7 +27,7 @@ class LogRepositoryJdbcTemplateTest {
 
 
     @Test
-    @DisplayName("작업 중인 상태에서 새 로그 저장 시 process_id 값 할당")
+    @DisplayName("작업 중인 상태에서 새 로그 저장 시 파일 이름 있음")
     void save() {
         // given
         String fileName = "123.NC";
@@ -54,7 +54,7 @@ class LogRepositoryJdbcTemplateTest {
 
         // before
         Assertions.assertThatThrownBy(
-                () -> logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+                () -> logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                         .orElseThrow(IllegalAccessError::new)
         ).isInstanceOf(IllegalAccessError.class);
 
@@ -63,15 +63,15 @@ class LogRepositoryJdbcTemplateTest {
 
         // then
         assertThat(logId).isGreaterThan(0);
-        Log recentLog = logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+        MachineStatus machineStatus = logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                 .orElseThrow(IllegalAccessError::new);
-        assertThat(recentLog.getLogName()).isEqualTo(logName);
-        assertThat(recentLog.getLogDateTime()).isEqualTo(logDateTime);
-        assertThat(recentLog.getProcessId()).isGreaterThan(0);
+        assertThat(machineStatus.getLogName()).isEqualTo(logName);
+        assertThat(machineStatus.getLogDateTime()).isEqualTo(logDateTime);
+        assertThat(machineStatus.getFileName()).isEqualTo(fileName);
     }
 
     @Test
-    @DisplayName("작업이 아예 없는 상태에서 새 로그 저장 시 process_id 값 null")
+    @DisplayName("작업이 아예 없는 상태에서 새 로그 저장 시 파일 없음")
     void test2() {
         // given
         Long machineId = 1L;
@@ -86,7 +86,7 @@ class LogRepositoryJdbcTemplateTest {
 
         // before
         Assertions.assertThatThrownBy(
-                () -> logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+                () -> logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                         .orElseThrow(IllegalAccessError::new)
         ).isInstanceOf(IllegalAccessError.class);
 
@@ -95,15 +95,15 @@ class LogRepositoryJdbcTemplateTest {
 
         // then
         assertThat(logId).isGreaterThan(0);
-        Log recentLog = logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+        MachineStatus machineStatus = logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                 .orElseThrow(IllegalAccessError::new);
-        assertThat(recentLog.getLogName()).isEqualTo(logName);
-        assertThat(recentLog.getLogDateTime()).isEqualTo(logDateTime);
-        assertThat(recentLog.getProcessId()).isEqualTo(0);
+        assertThat(machineStatus.getLogName()).isEqualTo(logName);
+        assertThat(machineStatus.getLogDateTime()).isEqualTo(logDateTime);
+        assertThat(machineStatus.getFileName()).isNull();
     }
 
     @Test
-    @DisplayName("작업이 끝난 상태에서 새 로그 저장 시 process_id 값 null")
+    @DisplayName("작업이 끝난 상태에서 새 로그 저장 시 파일 이름 없음")
     void test3() {
         // given
         String fileName = "123.NC";
@@ -131,7 +131,7 @@ class LogRepositoryJdbcTemplateTest {
 
         // before
         Assertions.assertThatThrownBy(
-                () -> logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+                () -> logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                         .orElseThrow(IllegalAccessError::new)
         ).isInstanceOf(IllegalAccessError.class);
 
@@ -140,10 +140,10 @@ class LogRepositoryJdbcTemplateTest {
 
         // then
         assertThat(logId).isGreaterThan(0);
-        Log recentLog = logRepositoryJdbcTemplate.findRecentLogByMachineId(machineId)
+        MachineStatus machineStatus = logRepositoryJdbcTemplate.findMachineStatusByMachineId(machineId)
                 .orElseThrow(IllegalAccessError::new);
-        assertThat(recentLog.getLogName()).isEqualTo(logName);
-        assertThat(recentLog.getLogDateTime()).isEqualTo(logDateTime);
-        assertThat(recentLog.getProcessId()).isEqualTo(0);
+        assertThat(machineStatus.getLogName()).isEqualTo(logName);
+        assertThat(machineStatus.getLogDateTime()).isEqualTo(logDateTime);
+        assertThat(machineStatus.getFileName()).isNull();
     }
 }
