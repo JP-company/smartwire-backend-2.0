@@ -39,3 +39,5 @@ out/
 src/test/java/jpcompany/smartwire2/TestAnything.java
 src/main/java/jpcompany/smartwire2/controller/TestController.java
 src/test/java/jpcompany/smartwire2/service/dto/ProcessLogTest.java
+test.mv.db
+test.trace.db
