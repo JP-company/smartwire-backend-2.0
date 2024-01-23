@@ -8,5 +8,5 @@ public enum JwtConstant {
     public static final Long MAIL_TOKEN_EXPIRATION_TIME = 300000L; // 5분
     public static final Long LOGIN_TOKEN_EXPIRATION_TIME = 30000000L; // 500분
     public static final String HEADER_STRING = "Authorization";
-    public static final String TOKEN_PREFIX = "Bearer";
+    public static final String TOKEN_PREFIX = "Bearer ";
 }

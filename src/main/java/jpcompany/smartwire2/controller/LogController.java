@@ -19,13 +19,13 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/log")
+@RequestMapping("/api/v1/logs")
 public class LogController {
 
     private final LogFacade logFacade;
     private final LogService logService;
 
-    @PostMapping("/realtime")
+    @PostMapping("/save")
     public ResponseEntity<ResponseDto> receiveRealTimeLog(
             @Valid @RequestBody LogReceiveDto logReceiveDto
     ) {

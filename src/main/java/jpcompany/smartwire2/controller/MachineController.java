@@ -17,12 +17,12 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/member")
+@RequestMapping("/api/v1/member/machines")
 public class MachineController {
 
     private final MachineService machineService;
 
-    @PostMapping("/machine/setup")
+    @PostMapping("/setup")
     public ResponseEntity<ResponseDto> setupMachines(
             @AuthenticationPrincipal Member member,
             @Validated @RequestBody List<MachineSetupDto> usersMachinesForm
@@ -36,7 +36,7 @@ public class MachineController {
                 .body(new ResponseDto(true, null, null));
     }
 
-    @GetMapping("/machine")
+    @GetMapping("")
     public ResponseEntity<ResponseDto> getMachines(
             @AuthenticationPrincipal Member member
     ) {
