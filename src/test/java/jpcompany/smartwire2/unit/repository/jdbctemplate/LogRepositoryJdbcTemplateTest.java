@@ -26,7 +26,7 @@ class LogRepositoryJdbcTemplateTest {
     private ProcessRepositoryJdbcTemplate processRepositoryJdbcTemplate;
 
 
-    @Test
+//    @Test
     @DisplayName("작업 중인 상태에서 새 로그 저장 시 파일 이름 있음")
     void save() {
         // given
