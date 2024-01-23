@@ -60,7 +60,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                         MockMvcRequestBuilders
-                                .post("/join")
+                                .post("/api/v1/join")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(memberJoinDto))
                                 .accept(MediaType.APPLICATION_JSON)
@@ -79,7 +79,7 @@ class MemberControllerTest {
         doThrow(new IllegalArgumentException("213")).when(memberService).join(any(MemberJoinCommand.class));
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/join")
+                        .post("/api/v1/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -101,7 +101,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/join")
+                        .post("/api/v1/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -125,7 +125,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/join")
+                        .post("/api/v1/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -148,7 +148,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/join")
+                        .post("/api/v1/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
@@ -171,7 +171,7 @@ class MemberControllerTest {
         // when
         ResultActions resultActions = mockMvc.perform(
                 MockMvcRequestBuilders
-                        .post("/join")
+                        .post("/api/v1/join")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(memberJoinDto))
                         .accept(MediaType.APPLICATION_JSON)
