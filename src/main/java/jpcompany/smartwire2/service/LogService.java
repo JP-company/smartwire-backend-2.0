@@ -14,7 +14,6 @@ import java.util.List;
 public class LogService {
 
     private final LogRepositoryJdbcTemplate logRepositoryJdbcTemplate;
-    private final ProcessService processService;
 
     public void saveLog(LogSaveCommand logSaveCommand) {
         LogSaveTransfer logSaveTransfer = logSaveCommand.toLogSaveTransfer();

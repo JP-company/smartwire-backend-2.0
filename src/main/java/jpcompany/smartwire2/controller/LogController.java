@@ -2,13 +2,11 @@ package jpcompany.smartwire2.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jpcompany.smartwire2.controller.dto.request.LogReceiveDto;
+import jpcompany.smartwire2.facade.dto.LogReceiveDto;
 import jpcompany.smartwire2.controller.dto.response.ResponseDto;
 import jpcompany.smartwire2.domain.MachineStatus;
 import jpcompany.smartwire2.facade.LogFacade;
 import jpcompany.smartwire2.service.LogService;
-import jpcompany.smartwire2.service.dto.LogSaveCommand;
-import jpcompany.smartwire2.service.dto.ProcessSaveCommand;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +27,12 @@ public class LogController {
     public ResponseEntity<ResponseDto> receiveRealTimeLog(
             @Valid @RequestBody LogReceiveDto logReceiveDto
     ) {
-        LogSaveCommand logSaveCommand = logReceiveDto.toLogSaveCommand();
-        ProcessSaveCommand processSaveCommand = logReceiveDto.toProcessSaveCommand();
-        logFacade.handleRealTimeLog(logSaveCommand, processSaveCommand);
+        logFacade.handleRealTimeLog(logReceiveDto);
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseDto(true, null, null));
     }
-
+    
     @GetMapping("")
     public ResponseEntity<ResponseDto> getRecentLog(
             HttpServletRequest httpServletRequest

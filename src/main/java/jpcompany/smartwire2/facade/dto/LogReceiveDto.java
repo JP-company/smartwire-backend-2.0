@@ -1,15 +1,17 @@
-package jpcompany.smartwire2.controller.dto.request;
+package jpcompany.smartwire2.facade.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jpcompany.smartwire2.service.dto.LogSaveCommand;
 import jpcompany.smartwire2.service.dto.ProcessSaveCommand;
+import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
 public class LogReceiveDto {
     private String fileName;
     private Float thickness;
