@@ -1,11 +1,13 @@
 package jpcompany.smartwire2.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpcompany.smartwire2.domain.validator.MachineValidator;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @ToString
@@ -17,6 +19,7 @@ public class Machine {
     private LocalDate dateManufactured;
     private Integer sequence;
     private Boolean selected;
+    private List<Process> processes;
 
     public static Machine initMachine(
             Long id,

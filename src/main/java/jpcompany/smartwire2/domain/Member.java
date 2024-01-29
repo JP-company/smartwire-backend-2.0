@@ -1,5 +1,6 @@
 package jpcompany.smartwire2.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpcompany.smartwire2.domain.validator.MemberValidator;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +14,9 @@ import java.time.LocalDateTime;
 public class Member {
     private Long id;
     private String loginEmail;
-    private String loginPassword;
+    @JsonIgnore private String loginPassword;
     private String companyName;
-    private Role role;
+    @JsonIgnore private Role role;
     private LocalDateTime createdDateTime;
     private Machines machines;
 
@@ -37,5 +38,4 @@ public class Member {
                 .createdDateTime(LocalDateTime.now().withNano(0))
                 .build();
     }
-
 }
