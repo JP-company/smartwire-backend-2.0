@@ -7,6 +7,6 @@ public interface MachineConstantDB {
     String MACHINE_MODEL = "machine_model";
     String DATE_MANUFACTURED = "date_manufactured";
     String SEQUENCE = "sequence";
-    String SELECTED = "selected";
+    String MACHINE_UUID = "machine_uuid";
     String MEMBER_ID = "member_id";
 }

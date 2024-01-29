@@ -18,7 +18,7 @@ public class Machine {
     private String machineModel;
     private LocalDate dateManufactured;
     private Integer sequence;
-    private Boolean selected;
+    @JsonIgnore private String machineUUID;
     private List<Process> processes;
 
     public static Machine initMachine(

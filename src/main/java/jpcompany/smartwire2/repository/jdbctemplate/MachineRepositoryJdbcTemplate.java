@@ -100,7 +100,7 @@ public class MachineRepositoryJdbcTemplate {
                         .machineModel(rs.getString(MachineConstantDB.MACHINE_MODEL))
                         .dateManufactured(rs.getObject(MachineConstantDB.DATE_MANUFACTURED, LocalDate.class))
                         .sequence(rs.getInt(MachineConstantDB.SEQUENCE))
-                        .selected(rs.getBoolean(MachineConstantDB.SELECTED))
+                        .machineUUID(rs.getString(MachineConstantDB.MACHINE_UUID))
                         .build();
     }
 }
