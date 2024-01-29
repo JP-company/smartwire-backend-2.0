@@ -1,7 +1,6 @@
 package jpcompany.smartwire2.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.security.token.JwtAuthenticationToken;
@@ -17,7 +16,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFilter {
 
     public JwtAuthenticationFilter() {
-        super(new AntPathRequestMatcher("/login"));
+        super(new AntPathRequestMatcher("/api/v1/login"));
     }
 
     @Override

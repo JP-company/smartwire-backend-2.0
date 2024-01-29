@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .setFailureHandlerJwt(authenticationFailureHandler)
                 .setAuthenticationManager(authenticationManager(authenticationConfiguration))
                 .setAuthorizationFilter(jwtAuthorizationFilter)
-                .loginProcessingUrl("/login");
+                .loginProcessingUrl("/api/v1/login");
 
         return http.build();
     }
