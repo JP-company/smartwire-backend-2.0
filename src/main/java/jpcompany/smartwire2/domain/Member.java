@@ -17,6 +17,7 @@ public class Member {
     private String companyName;
     private Role role;
     private LocalDateTime createdDateTime;
+    private Machines machines;
 
     public enum Role {
         ADMIN, MEMBER, EMAIL_UNAUTHORIZED

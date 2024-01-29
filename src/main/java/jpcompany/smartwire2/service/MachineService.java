@@ -19,13 +19,12 @@ public class MachineService {
     private final MachineRepositoryJdbcTemplate machineRepositoryJdbcTemplate;
 
     public void setup(List<MachineSetupCommand> machinesSetupForm, Long memberId) {
-
         List<Machine> machinesForm = machinesSetupForm.stream()
                 .map(MachineSetupCommand::toMachine)
                 .toList();
         Machines machines = new Machines(machinesForm);
 
-        machines.getMachinesForm().stream()
+        machines.getMachinesInfo().stream()
                 .map(machine -> MachineSetupTransfer.of(machine, memberId))
                 .forEach(machineSetupTransfer -> {
                     if (machineSetupTransfer.getId() != null) {
@@ -36,7 +35,7 @@ public class MachineService {
                 });
     }
 
-    public List<Machine> findMachines(Long memberId) {
-        return machineRepositoryJdbcTemplate.findAllByMemberId(memberId);
+    public Machines findMachines(Long memberId) {
+        return new Machines(machineRepositoryJdbcTemplate.findAllByMemberId(memberId));
     }
 }

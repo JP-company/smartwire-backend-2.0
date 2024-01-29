@@ -7,11 +7,9 @@ import java.util.List;
 
 @Getter
 public class Machines {
-
-    private final List<Machine> machinesForm;
-
+    private final List<Machine> machinesInfo;
     public Machines(List<Machine> machinesForm) {
         new MachinesValidator().validate(machinesForm);
-        this.machinesForm = machinesForm;
+        this.machinesInfo = machinesForm;
     }
 }

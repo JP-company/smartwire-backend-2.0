@@ -2,7 +2,7 @@ package jpcompany.smartwire2.controller;
 
 import jpcompany.smartwire2.controller.dto.request.MachineSetupDto;
 import jpcompany.smartwire2.controller.dto.response.ResponseDto;
-import jpcompany.smartwire2.domain.Machine;
+import jpcompany.smartwire2.domain.Machines;
 import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.service.MachineService;
 import jpcompany.smartwire2.service.dto.MachineSetupCommand;
@@ -30,8 +30,8 @@ public class MachineController {
         List<MachineSetupCommand> machinesSetupForm = usersMachinesForm.stream()
                 .map(MachineSetupDto::toMachineSetupCommand)
                 .toList();
-
         machineService.setup(machinesSetupForm, member.getId());
+
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseDto(true, null, null));
     }
@@ -40,7 +40,7 @@ public class MachineController {
     public ResponseEntity<ResponseDto> getMachines(
             @AuthenticationPrincipal Member member
     ) {
-        List<Machine> machines = machineService.findMachines(member.getId());
+        Machines machines = machineService.findMachines(member.getId());
         return ResponseEntity.status(HttpStatus.OK)
                 .body(new ResponseDto(true, null, machines));
     }
