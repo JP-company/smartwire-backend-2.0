@@ -1,12 +1,16 @@
 package jpcompany.smartwire2.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
-import jpcompany.smartwire2.controller.dto.request.MemberJoinDto;
-import jpcompany.smartwire2.controller.dto.request.validator.JoinValidator;
-import jpcompany.smartwire2.controller.dto.response.ResponseDto;
+import jpcompany.smartwire2.dto.request.MemberJoinForm;
+import jpcompany.smartwire2.dto.request.validator.JoinValidator;
+import jpcompany.smartwire2.dto.response.MemberResponse;
+import jpcompany.smartwire2.dto.response.MemberWithMachinesResponse;
+import jpcompany.smartwire2.dto.response.ResponseDto;
+import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.domain.Member;
+import jpcompany.smartwire2.service.MachineService;
 import jpcompany.smartwire2.service.MemberService;
-import jpcompany.smartwire2.service.dto.MemberJoinCommand;
+import jpcompany.smartwire2.service.dto.MemberJoinDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,41 +22,73 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
 @Controller
+@RequestMapping("/api/v1")
 public class MemberController {
 
     private final JoinValidator joinValidator;
     private final MemberService memberService;
+    private final MachineService machineService;
 
-
-    @Operation(summary = "회원 가입 페이지 요청", description = "화원 가입을 요청합니다.")
+    @Operation(summary = "회원 가입 요청", description = "화원 가입을 요청받는 API 입니다.")
     @PostMapping("/join")
     @ResponseBody
     public ResponseEntity<ResponseDto> join(
-            @Validated @RequestBody MemberJoinDto memberJoinDto) {
-        MemberJoinCommand memberJoinCommand =
-                MemberJoinDto.toMemberJoinCommand(memberJoinDto);
-        memberService.join(memberJoinCommand);
+            @Validated @RequestBody MemberJoinForm memberJoinForm
+    ) {
+        MemberJoinDto memberJoinDto = memberJoinForm.toMemberJoinDto();
+        memberService.join(memberJoinDto);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseDto(true, null, null));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDto.builder()
+                                .success(true)
+                                .build()
+                );
     }
 
-    @GetMapping("/info")
-    @ResponseBody
-    public ResponseEntity<ResponseDto> getMemberInfo(
+    @GetMapping("/member")
+    public ResponseEntity<ResponseDto> memberInfo(
             @AuthenticationPrincipal Member member
     ) {
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseDto(true, null, member));
+        MemberResponse memberResponse = MemberResponse.create(member);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDto.builder()
+                                .success(true)
+                                .body(memberResponse)
+                                .build()
+                );
+    }
+
+    @GetMapping("/member-with-machines")
+    public ResponseEntity<ResponseDto> memberWithMachines(
+            @AuthenticationPrincipal Member member
+    ) {
+        List<Machine> machines = machineService.findMachines(member);
+        MemberWithMachinesResponse memberWithMachinesResponse = MemberWithMachinesResponse.create(member, machines);
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDto.builder()
+                                .success(true)
+                                .body(memberWithMachinesResponse)
+                                .build()
+                );
+
     }
 
     @GetMapping("/email_verify/{authToken}")
     public String emailVerify(@PathVariable String authToken, Model model) {
-        memberService.authenticateEmail(authToken); // 인증 예외 발생 - 1. 토큰 검증 실패, 2. DB 업데이트 실패
+        memberService.authenticateEmail(authToken);
         model.addAttribute("verified", "인증에 성공하였습니다.");
         return "email/result";
     }

@@ -18,7 +18,7 @@ class MemberDomainTest {
         String companyName = "회사이름";
 
         // when
-        Member member = Member.initMember(loginEmail, loginPassword, companyName);
+        Member member = Member.create(loginEmail, loginPassword, companyName);
 
         // then
         Assertions.assertThat(member.getId()).isNull();
@@ -38,7 +38,7 @@ class MemberDomainTest {
         String companyName = "회사이름";
 
         // when, then
-        Assertions.assertThatThrownBy(() -> Member.initMember(loginEmail, loginPassword, companyName))
+        Assertions.assertThatThrownBy(() -> Member.create(loginEmail, loginPassword, companyName))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -51,7 +51,7 @@ class MemberDomainTest {
         String companyName = "회사이름";
 
         // when, then
-        Assertions.assertThatThrownBy(() -> Member.initMember(loginEmail, loginPassword, companyName))
+        Assertions.assertThatThrownBy(() -> Member.create(loginEmail, loginPassword, companyName))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
@@ -64,7 +64,7 @@ class MemberDomainTest {
         String loginPassword = "Qweasdzxc1!";
 
         // when, then
-        Assertions.assertThatThrownBy(() -> Member.initMember(loginEmail, loginPassword, companyName))
+        Assertions.assertThatThrownBy(() -> Member.create(loginEmail, loginPassword, companyName))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }

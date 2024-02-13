@@ -1,17 +1,30 @@
 package jpcompany.smartwire2.domain;
 
 import jpcompany.smartwire2.domain.validator.MachinesValidator;
-import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 public class Machines {
+    private final List<Machine> machines;
 
-    private final List<Machine> machinesForm;
+    public static Machines create(List<Machine> machinesForm) {
+        return new Machines(machinesForm);
+    }
 
-    public Machines(List<Machine> machinesForm) {
+    private Machines(List<Machine> machinesForm) {
         new MachinesValidator().validate(machinesForm);
-        this.machinesForm = machinesForm;
+        machines = machinesForm;
+    }
+
+    public List<Machine> addedMachines() {
+        return machines.stream()
+                .filter(machine -> machine.getId() == null)
+                .toList();
+    }
+
+    public List<Machine> existedMachines() {
+        return machines.stream()
+                .filter(machine -> machine.getId() != null)
+                .toList();
     }
 }

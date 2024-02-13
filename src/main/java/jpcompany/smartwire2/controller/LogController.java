@@ -1,55 +1,36 @@
 package jpcompany.smartwire2.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import jpcompany.smartwire2.controller.dto.request.LogReceiveDto;
-import jpcompany.smartwire2.controller.dto.response.ResponseDto;
-import jpcompany.smartwire2.domain.MachineStatus;
+import jpcompany.smartwire2.dto.response.ResponseDto;
 import jpcompany.smartwire2.facade.LogFacade;
-import jpcompany.smartwire2.service.LogService;
-import jpcompany.smartwire2.service.dto.LogSaveCommand;
-import jpcompany.smartwire2.service.dto.ProcessSaveCommand;
+import jpcompany.smartwire2.dto.request.LogSaveRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Arrays;
-import java.util.List;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/log")
+@RequestMapping("/api/v1/logs")
 public class LogController {
 
     private final LogFacade logFacade;
-    private final LogService logService;
 
-    @PostMapping("/realtime")
+    @PostMapping("/save")
     public ResponseEntity<ResponseDto> receiveRealTimeLog(
-            @Valid @RequestBody LogReceiveDto logReceiveDto
+            @Valid @RequestBody LogSaveRequest logSaveRequest
     ) {
-        LogSaveCommand logSaveCommand = logReceiveDto.toLogSaveCommand();
-        ProcessSaveCommand processSaveCommand = logReceiveDto.toProcessSaveCommand();
-        logFacade.handleRealTimeLog(logSaveCommand, processSaveCommand);
+        logFacade.handleRealTimeLog(logSaveRequest);
 
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseDto(true, null, null));
-    }
-
-    @GetMapping("")
-    public ResponseEntity<ResponseDto> getRecentLog(
-            HttpServletRequest httpServletRequest
-//            @RequestParam String requestedMachineIds
-    ) {
-        String requestedMachineIds = httpServletRequest.getParameter("requestedMachineIds");
-        List<Long> machineIds = Arrays.stream(requestedMachineIds.split(","))
-                .map(Long::parseLong)
-                .toList();
-
-        List<MachineStatus> recentMachinesStatus = logService.getRecentMachinesStatus(machineIds);
-
-        return ResponseEntity.status(HttpStatus.OK)
-                .body(new ResponseDto(true, null, recentMachinesStatus));
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseDto.builder()
+                                .success(true)
+                                .build()
+                );
     }
 }

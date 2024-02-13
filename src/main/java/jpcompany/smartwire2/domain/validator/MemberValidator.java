@@ -1,7 +1,6 @@
 package jpcompany.smartwire2.domain.validator;
 
 public class MemberValidator {
-
     public void validate(String loginEmail, String loginPassword, String companyName) {
         validateLoginEmail(loginEmail);
         validateLoginPassword(loginPassword);

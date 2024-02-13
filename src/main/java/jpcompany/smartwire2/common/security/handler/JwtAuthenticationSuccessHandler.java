@@ -1,12 +1,11 @@
 package jpcompany.smartwire2.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.jwt.JwtTokenService;
 import jpcompany.smartwire2.common.jwt.constant.JwtConstant;
-import jpcompany.smartwire2.controller.dto.response.ResponseDto;
+import jpcompany.smartwire2.dto.response.ResponseDto;
 import jpcompany.smartwire2.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,7 +40,9 @@ public class JwtAuthenticationSuccessHandler implements AuthenticationSuccessHan
     }
 
     private void setBody(HttpServletResponse response) throws IOException {
-        ResponseDto responseDto = new ResponseDto(true, null, null);
+        ResponseDto responseDto = ResponseDto.builder()
+                                        .success(true)
+                                        .build();
         String responseBody = objectMapper.writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();

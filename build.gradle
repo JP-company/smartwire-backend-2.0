@@ -28,11 +28,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-mail' // 메일 API
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-devtools'
 
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	implementation 'com.h2database:h2' // h2 : implementation
 	implementation 'com.auth0:java-jwt:3.18.2' // jwt
 
+	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.0' // 쿼리문 상세
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j' // MySQL 드라이버 라이브러리
 

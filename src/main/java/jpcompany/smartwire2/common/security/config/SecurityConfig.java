@@ -38,8 +38,8 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/error-test").permitAll()
-                                .requestMatchers("/login", "/join/**", "/email_verify/**").anonymous()
+                                .requestMatchers("/test").permitAll()
+                                .requestMatchers("/api/v1/login", "/api/v1/join/**", "/api/v1/email_verify/**").anonymous()
                                 .requestMatchers("/", "/api/**").hasAuthority(Member.Role.MEMBER.name())
                                 .requestMatchers("/admin/**").hasAuthority(Member.Role.ADMIN.name())
                                 .anyRequest().authenticated()
@@ -57,7 +57,7 @@ public class SecurityConfig {
                 .setFailureHandlerJwt(authenticationFailureHandler)
                 .setAuthenticationManager(authenticationManager(authenticationConfiguration))
                 .setAuthorizationFilter(jwtAuthorizationFilter)
-                .loginProcessingUrl("/login");
+                .loginProcessingUrl("/api/v1/login");
 
         return http.build();
     }
