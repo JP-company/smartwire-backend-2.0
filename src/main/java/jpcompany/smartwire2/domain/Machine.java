@@ -1,46 +1,78 @@
 package jpcompany.smartwire2.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import jpcompany.smartwire2.domain.validator.MachineValidator;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 
 import java.time.LocalDate;
-import java.util.List;
 
+@Entity
 @Getter
-@ToString
-@Builder(toBuilder = true)
+@Builder(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Machine {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "machine_id")
     private Long id;
-    private String machineName;
-    private String machineModel;
-    private LocalDate dateManufactured;
-    private Integer sequence;
-    @JsonIgnore private String machineUUID;
-    private List<Process> processes;
 
-    public static Machine initMachine(
+    @Column(length = 30, nullable = false)
+    private String machineName;
+
+    @Column(length = 30)
+    private String machineModel;
+
+    private LocalDate dateManufactured;
+
+    private Integer sequence;
+
+    @Column(length = 60)
+    private String machineUUID;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
+    protected Machine() {}
+
+    public static Machine create(
             Long id,
             String machineName,
             String machineModel,
             LocalDate dateManufactured,
             Integer sequence
     ) {
-        String machineNameTrim = machineName.trim();
-        String machineModelTrim = machineModel.trim();
+        machineName = machineName.trim();
+        if (machineModel != null) {
+            machineModel = machineModel.trim();
+        }
         new MachineValidator().validate(
-                machineNameTrim,
-                machineModelTrim,
+                machineName,
+                machineModel,
                 dateManufactured
         );
         return Machine.builder()
                 .id(id)
-                .machineName(machineNameTrim)
-                .machineModel(machineModelTrim)
+                .machineName(machineName)
+                .machineModel(machineModel)
                 .dateManufactured(dateManufactured)
                 .sequence(sequence)
                 .build();
+    }
+
+    public void edit(Machine machine) {
+        this.machineName = machine.getMachineName();
+        this.machineModel = machine.getMachineModel();
+        this.dateManufactured = machine.getDateManufactured();
+        this.sequence = machine.getSequence();
+    }
+
+    public void setMachineUUID(String machineUUID) {
+        this.machineUUID = machineUUID;
+    }
+    public void setMember(Member member) {
+        this.member = member;
     }
 }

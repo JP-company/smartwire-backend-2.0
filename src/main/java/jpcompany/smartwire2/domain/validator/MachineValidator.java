@@ -6,7 +6,9 @@ public class MachineValidator {
 
     public void validate(String machineName, String machineModel, LocalDate dateManufactured) {
         validateMachineName(machineName);
-        validateMachineModel(machineModel);
+        if (machineModel != null) {
+            validateMachineModel(machineModel);
+        }
         validateDateManufactured(dateManufactured);
     }
 
