@@ -27,7 +27,8 @@ public class JwtAuthenticationProvider implements AuthenticationProvider {
 
         PrincipalDetails principalDetails = (PrincipalDetails) userDetailsService.loadUserByUsername(loginEmail);
 
-        if (!oneWayEncryptor.matches(loginPassword, principalDetails.getPassword())) {
+//        if (!oneWayEncryptor.matches(loginPassword, principalDetails.getPassword())) {
+        if (!loginPassword.equals(principalDetails.getPassword())) {
             throw new CustomException(INVALID_MEMBER);
         }
 

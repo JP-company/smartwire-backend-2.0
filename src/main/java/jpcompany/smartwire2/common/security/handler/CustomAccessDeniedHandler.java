@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import jpcompany.smartwire2.controller.dto.response.ResponseDto;
+import jpcompany.smartwire2.dto.response.ResponseDto;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
@@ -21,7 +21,10 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
 
-        ResponseDto responseDto = new ResponseDto(false, accessDenied.getReason(), null);
+        ResponseDto responseDto = ResponseDto.builder()
+                                        .success(false)
+                                        .message(accessDenied.getReason())
+                                        .build();
         String responseBody = new ObjectMapper().writeValueAsString(responseDto);
 
         PrintWriter writer = response.getWriter();

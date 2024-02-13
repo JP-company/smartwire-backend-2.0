@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jpcompany.smartwire2.common.security.token.JwtAuthenticationToken;
-import jpcompany.smartwire2.controller.dto.request.MemberLoginDto;
+import jpcompany.smartwire2.dto.request.MemberLoginForm;
 import jpcompany.smartwire2.domain.constant.MemberConstant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -22,16 +22,16 @@ public class JwtAuthenticationFilter extends AbstractAuthenticationProcessingFil
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response)
             throws AuthenticationException, IOException {
-        MemberLoginDto memberLoginDto;
+        MemberLoginForm memberLoginForm;
         if (request.getParameter(MemberConstant.LOGIN_EMAIL) != null && request.getParameter(MemberConstant.LOGIN_PASSWORD) != null) {
-           memberLoginDto = new MemberLoginDto(
-                   request.getParameter(MemberConstant.LOGIN_EMAIL),
-                   request.getParameter(MemberConstant.LOGIN_PASSWORD)
-           );
+            memberLoginForm = MemberLoginForm.builder()
+                   .loginEmail(request.getParameter(MemberConstant.LOGIN_EMAIL))
+                   .loginPassword(request.getParameter(MemberConstant.LOGIN_PASSWORD))
+                   .build();
         } else {
-            memberLoginDto = new ObjectMapper().readValue(request.getInputStream(), MemberLoginDto.class);
+            memberLoginForm = new ObjectMapper().readValue(request.getInputStream(), MemberLoginForm.class);
         }
-        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(memberLoginDto);
+        JwtAuthenticationToken jwtAuthenticationToken = new JwtAuthenticationToken(memberLoginForm);
         return getAuthenticationManager().authenticate(jwtAuthenticationToken);
     }
 }
