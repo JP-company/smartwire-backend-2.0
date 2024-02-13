@@ -1,30 +1,32 @@
 package jpcompany.smartwire2.facade;
 
-import jpcompany.smartwire2.facade.dto.LogReceiveDto;
+import jpcompany.smartwire2.dto.request.LogSaveRequest;
 import jpcompany.smartwire2.service.LogService;
 import jpcompany.smartwire2.service.ProcessService;
-import jpcompany.smartwire2.service.dto.LogSaveCommand;
-import jpcompany.smartwire2.service.dto.ProcessSaveCommand;
+import jpcompany.smartwire2.service.dto.LogSaveDto;
+import jpcompany.smartwire2.service.dto.ProcessSaveDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
+@Transactional
 public class LogFacade {
 
     private final LogService logService;
     private final ProcessService processService;
 
-    public void handleRealTimeLog(LogReceiveDto logReceiveDto) {
-        LogSaveCommand logSaveCommand = logReceiveDto.toLogSaveCommand();
-        ProcessSaveCommand processSaveCommand = logReceiveDto.toProcessSaveCommand();
+    public void handleRealTimeLog(LogSaveRequest logSaveRequest) {
+        ProcessSaveDto processSaveDto = logSaveRequest.toProcessSaveDto();
+        LogSaveDto logSaveDto = logSaveRequest.toLogSaveDto();
 
-        if (processSaveCommand.isNotEmpty()) {
-            processService.saveProcess(processSaveCommand);
+        if (processSaveDto.isNotEmpty()) {
+            processService.saveProcess(processSaveDto);
         }
-        logService.saveLog(logSaveCommand);
-        if (logSaveCommand.isFinished()) {
-            processService.finishProcess(processSaveCommand);
+        logService.saveLog(logSaveDto);
+        if (logSaveDto.isFinished()) {
+            processService.finishProcess(processSaveDto.getMachineId(), processSaveDto.getLogDateTime());
         }
 
         // TODO - 웹소켓 처리

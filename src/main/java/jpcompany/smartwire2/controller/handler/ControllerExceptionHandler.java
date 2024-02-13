@@ -2,7 +2,7 @@ package jpcompany.smartwire2.controller.handler;
 
 import jpcompany.smartwire2.common.error.CustomException;
 import jpcompany.smartwire2.common.error.ErrorCode;
-import jpcompany.smartwire2.controller.dto.response.ResponseDto;
+import jpcompany.smartwire2.dto.response.ResponseDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,21 +18,39 @@ public class ControllerExceptionHandler {
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Object> handleIllegalArgument(IllegalArgumentException e) {
         ErrorCode errorCode = ErrorCode.INVALID_INPUT;
-        return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(new ResponseDto(false, errorCode.getReason(), null));
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(
+                        ResponseDto.builder()
+                                .success(false)
+                                .message(errorCode.getReason())
+                                .build()
+                );
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Object> handleValidation(MethodArgumentNotValidException e) {
         ErrorCode errorCode = ErrorCode.INVALID_INPUT;
-        return ResponseEntity.status(errorCode.getHttpStatus())
-                .body(new ResponseDto(false, errorCode.getReason(), null));
+        return ResponseEntity
+                .status(errorCode.getHttpStatus())
+                .body(
+                        ResponseDto.builder()
+                                .success(false)
+                                .message(errorCode.getReason())
+                                .build()
+                );
     }
 
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<Object> handleCustomException(CustomException e) {
-        return ResponseEntity.status(e.getHttpStatus())
-                .body(new ResponseDto(false, e.getMessage(), null));
+        return ResponseEntity
+                .status(e.getHttpStatus())
+                .body(
+                        ResponseDto.builder()
+                                .success(false)
+                                .message(e.getMessage())
+                                .build()
+                );
     }
 
     @ExceptionHandler(Exception.class)
@@ -48,7 +66,14 @@ public class ControllerExceptionHandler {
             cause = cause.getCause();
         }
 
-        return ResponseEntity.status(undefinedError.getHttpStatus())
-                .body(new ResponseDto(false, undefinedError.getReason(), errors));
+        return ResponseEntity
+                .status(undefinedError.getHttpStatus())
+                .body(
+                        ResponseDto.builder()
+                                .success(false)
+                                .message(undefinedError.getReason())
+                                .body(errors)
+                                .build()
+                );
     }
 }
