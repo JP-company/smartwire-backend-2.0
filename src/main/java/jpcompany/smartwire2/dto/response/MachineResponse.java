@@ -1,6 +1,7 @@
 package jpcompany.smartwire2.dto.response;
 
 import jpcompany.smartwire2.domain.Machine;
+import jpcompany.smartwire2.domain.Machines;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,6 @@ public class MachineResponse {
     private LocalDate dateManufactured;
     private Integer sequence;
     private boolean selected;
-    private MemberResponse member;
 
     public static MachineResponse create(Machine machine) {
         return MachineResponse.builder()
@@ -28,12 +28,11 @@ public class MachineResponse {
                 .dateManufactured(machine.getDateManufactured())
                 .sequence(machine.getSequence())
                 .selected(machine.getMachineUUID() != null)
-                .member(MemberResponse.create(machine.getMember()))
                 .build();
     }
 
-    public static List<MachineResponse> toMachinesResponse(List<Machine> machines) {
-        return machines.stream()
+    public static List<MachineResponse> createList(Machines machines) {
+        return machines.getMachines().stream()
                 .map(MachineResponse::create)
                 .sorted(Comparator.comparingInt(MachineResponse::getSequence))
                 .toList();

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Machine {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "machine_id")
+    @Column(name = "machine_id", unique = true)
     private Long id;
 
     @Column(length = 30, nullable = false)
@@ -28,12 +28,10 @@ public class Machine {
 
     private Integer sequence;
 
-    @Column(length = 60)
+    @Column(name = "machine_uuid", length = 60)
     private String machineUUID;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
+    private Long memberId;
 
     protected Machine() {}
 
@@ -42,12 +40,11 @@ public class Machine {
             String machineName,
             String machineModel,
             LocalDate dateManufactured,
-            Integer sequence
+            Integer sequence,
+            Long memberId
     ) {
         machineName = machineName.trim();
-        if (machineModel != null) {
-            machineModel = machineModel.trim();
-        }
+        machineModel = machineModel != null ? machineModel.trim() : null;
         new MachineValidator().validate(
                 machineName,
                 machineModel,
@@ -59,7 +56,25 @@ public class Machine {
                 .machineModel(machineModel)
                 .dateManufactured(dateManufactured)
                 .sequence(sequence)
+                .memberId(memberId)
                 .build();
+    }
+
+    public static Machine create(
+            String machineName,
+            String machineModel,
+            LocalDate dateManufactured,
+            Integer sequence,
+            Long memberId
+    ) {
+        return create(
+                null,
+                machineName,
+                machineModel,
+                dateManufactured,
+                sequence,
+                memberId
+        );
     }
 
     public void edit(Machine machine) {
@@ -72,7 +87,5 @@ public class Machine {
     public void setMachineUUID(String machineUUID) {
         this.machineUUID = machineUUID;
     }
-    public void setMember(Member member) {
-        this.member = member;
-    }
+
 }

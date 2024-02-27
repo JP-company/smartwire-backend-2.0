@@ -1,5 +1,6 @@
 package jpcompany.smartwire2.service.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jpcompany.smartwire2.domain.Log;
 import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.domain.Process;
@@ -14,22 +15,20 @@ import java.time.LocalDateTime;
 public class LogSaveDto {
     private String logName;
     private LocalDateTime logDateTime;
-    private Long machineId;
 
     public static LogSaveDto create(
             String logName,
-            LocalDateTime logDateTime,
-            Long machineId
+            LocalDateTime logDateTime
     ) {
         return LogSaveDto.builder()
                 .logName(logName)
                 .logDateTime(logDateTime)
-                .machineId(machineId)
                 .build();
     }
 
-    public boolean isFinished() {
-        return logName.equals("stop_reset");
+    @JsonIgnore
+    public boolean isReset() {
+        return logName.equals("reset_리셋");
     }
 
     public Log toLog(Machine machine, Process process) {

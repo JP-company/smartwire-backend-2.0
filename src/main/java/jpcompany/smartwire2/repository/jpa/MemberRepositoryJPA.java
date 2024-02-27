@@ -6,6 +6,7 @@ import jpcompany.smartwire2.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -21,12 +22,6 @@ public class MemberRepositoryJPA implements MemberRepository {
     }
 
     @Override
-    public void updateRole(Long memberId, Member.Role role) {
-        Member member = em.find(Member.class, memberId);
-        member.changeRole(role);
-    }
-
-    @Override
     public Optional<Member> findByLoginEmail(String loginEmail) {
         String jpql =
                 """
@@ -34,9 +29,13 @@ public class MemberRepositoryJPA implements MemberRepository {
                 FROM Member m
                 WHERE m.loginEmail = :loginEmail
                 """;
-        Member member = em.createQuery(jpql, Member.class)
+
+        List<Member> result = em.createQuery(jpql, Member.class)
                 .setParameter("loginEmail", loginEmail)
-                .getSingleResult();
+                .setMaxResults(1)
+                .getResultList();
+
+        Member member = result.isEmpty() ? null : result.get(0);
         return Optional.ofNullable(member);
     }
 
@@ -45,5 +44,11 @@ public class MemberRepositoryJPA implements MemberRepository {
         return Optional.ofNullable(
                 em.find(Member.class, memberId)
         );
+    }
+
+    @Override
+    public void updateRole(Long memberId, Member.Role role) {
+        Member member = em.find(Member.class, memberId);
+        member.changeRole(role);
     }
 }

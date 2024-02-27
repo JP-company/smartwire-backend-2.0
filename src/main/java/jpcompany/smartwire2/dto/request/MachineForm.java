@@ -20,13 +20,14 @@ public class MachineForm {
     @NotBlank
     private int sequence;
 
-    public Machine toMachine() {
+    public Machine toMachine(Long memberId) {
         return Machine.create(
                 id,
                 machineName,
                 machineModel,
                 dateManufactured,
-                sequence
+                sequence,
+                memberId
         );
     }
 }

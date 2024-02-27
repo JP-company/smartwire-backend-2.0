@@ -1,13 +1,13 @@
 package jpcompany.smartwire2.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jpcompany.smartwire2.domain.Machines;
+import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.dto.request.MemberJoinForm;
 import jpcompany.smartwire2.dto.request.validator.JoinValidator;
 import jpcompany.smartwire2.dto.response.MemberResponse;
 import jpcompany.smartwire2.dto.response.MemberWithMachinesResponse;
 import jpcompany.smartwire2.dto.response.ResponseDto;
-import jpcompany.smartwire2.domain.Machine;
-import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.service.MachineService;
 import jpcompany.smartwire2.service.MemberService;
 import jpcompany.smartwire2.service.dto.MemberJoinDto;
@@ -21,8 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -72,7 +70,7 @@ public class MemberController {
     public ResponseEntity<ResponseDto> memberWithMachines(
             @AuthenticationPrincipal Member member
     ) {
-        List<Machine> machines = machineService.findMachines(member);
+        Machines machines = machineService.findMachines(member.getId());
         MemberWithMachinesResponse memberWithMachinesResponse = MemberWithMachinesResponse.create(member, machines);
 
         return ResponseEntity
