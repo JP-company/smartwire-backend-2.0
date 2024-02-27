@@ -2,7 +2,6 @@ package jpcompany.smartwire2.service;
 
 import jpcompany.smartwire2.domain.Machine;
 import jpcompany.smartwire2.domain.Machines;
-import jpcompany.smartwire2.domain.Member;
 import jpcompany.smartwire2.dto.request.MachineForm;
 import jpcompany.smartwire2.repository.MachineRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,26 +20,27 @@ public class MachineService {
 
     public void setup(List<MachineForm> machinesForm, Long memberId) {
         List<Machine> validatedMachinesForm = machinesForm.stream()
-                .map(MachineForm::toMachine)
+                .map(machineForm -> machineForm.toMachine(memberId))
                 .toList();
-        Machines machines = Machines.create(validatedMachinesForm);
 
-        machines.addedMachines().forEach(machine -> machineRepository.save(machine, memberId));
+        Machines machines = Machines.create(validatedMachinesForm, memberId);
 
+        machines.addedMachines().forEach(machineRepository::save);
         machines.existedMachines().forEach(machineRepository::update);
     }
 
-    public List<Machine> findMachines(Member member) {
-        return machineRepository.findAllByMemberId(member);
+    public Machines findMachines(Long memberId) {
+        List<Machine> machines = machineRepository.findAllByMemberId(memberId);
+        return Machines.create(machines, memberId);
     }
 
-    public String connectWithNewMachine(Member member, Long machineId) {
+    public String connectWithNewMachine(Long memberId, Long machineId) {
         String machineUUID = UUID.randomUUID().toString();
-        machineRepository.updateMachineUUID(member, machineId, machineUUID);
+        machineRepository.updateMachineUUID(memberId, machineId, machineUUID);
         return machineUUID;
     }
 
-    public Machine checkMachineConnection(Member member, Long machineId, String machineUUID) {
-        return machineRepository.findByMemberAndMachineIdAndMachineUUID(member, machineId, machineUUID);
+    public Machine checkMachineConnection(Long memberId, Long machineId, String machineUUID) {
+        return machineRepository.findByMemberAndMachineIdAndMachineUUID(memberId, machineId, machineUUID);
     }
 }
