@@ -23,11 +23,18 @@ public class LogSaveRequest {
 
     private Long machineId;
 
+    public boolean isStart() {
+        return fileName != null;
+    }
+
+    public boolean isReset() {
+        return logName.equals("reset_리셋");
+    }
+
     public LogSaveDto toLogSaveDto() {
         return LogSaveDto.create(
                 logName,
-                logDateTime,
-                machineId
+                logDateTime
         );
     }
 
