@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Log {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "log_id")
+    @Column(name = "log_id", unique = true)
     private Long id;
 
     @Column(length = 60)
@@ -44,5 +44,19 @@ public class Log {
                 .machine(machine)
                 .process(process)
                 .build();
+    }
+
+    public static Log create() {
+        return Log.builder().build();
+    }
+
+    public String getFileName() {
+        return process != null ? process.getFileName() : "";
+    }
+    public Float getThickness() {
+        return process != null ? process.getThickness() : null;
+    }
+    public Long getMachineId() {
+        return machine != null ? machine.getId() : null;
     }
 }

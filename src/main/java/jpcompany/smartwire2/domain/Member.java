@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "member_id")
+    @Column(name = "member_id", unique = true)
     private Long id;
 
     @Column(length = 60, unique = true)
@@ -32,6 +32,10 @@ public class Member {
     private Role role;
 
     private LocalDateTime createdDateTime;
+
+    public Member(Long id) {
+        this.id = id;
+    }
 
     protected Member() {}
     public enum Role {

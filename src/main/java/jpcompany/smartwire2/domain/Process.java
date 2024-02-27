@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Process {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "process_id")
+    @Column(name = "process_id", unique = true)
     private Long id;
 
     @Column(length = 60)
@@ -44,9 +44,5 @@ public class Process {
                .startedDateTime(startedDateTime)
                .machine(machine)
                .build();
-    }
-
-    public void finished(LocalDateTime time) {
-        this.finishedDateTime = time;
     }
 }
