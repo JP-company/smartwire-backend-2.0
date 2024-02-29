@@ -18,4 +18,12 @@ public class LogService {
     public void save(List<LogSaveDto> logSaveDtos, Long machineId, Long processId) {
         logRepository.save(logSaveDtos, machineId, processId);
     }
+
+    public void save(LogSaveDto logSaveDto, Long machineId, Long processId) {
+        logRepository.save(logSaveDto, machineId, processId);
+    }
+
+    public void save(LogSaveDto logSaveDto, Long machineId) {
+        logRepository.save(logSaveDto, machineId);
+    }
 }

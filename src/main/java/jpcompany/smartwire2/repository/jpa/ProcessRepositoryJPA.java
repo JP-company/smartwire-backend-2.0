@@ -8,6 +8,8 @@ import jpcompany.smartwire2.service.dto.ProcessSaveDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 @RequiredArgsConstructor
 public class ProcessRepositoryJPA implements ProcessRepository {
@@ -20,5 +22,18 @@ public class ProcessRepositoryJPA implements ProcessRepository {
         Process process = processSaveDto.toProcess(machine);
         em.persist(process);
         return process.getId();
+    }
+
+    @Override
+    public void updateFinishedDateTime(Long machineId, LocalDateTime logDateTime) {
+        String jpql =
+                """
+                SELECT p
+                FROM Process p
+                ORDER BY p.id DESC
+                """;
+        Process process = em.createQuery(jpql, Process.class)
+                .getSingleResult();
+        process.finished(logDateTime);
     }
 }

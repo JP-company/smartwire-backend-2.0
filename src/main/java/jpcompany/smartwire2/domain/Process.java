@@ -45,4 +45,8 @@ public class Process {
                .machine(machine)
                .build();
     }
+
+    public void finished(LocalDateTime time) {
+        this.finishedDateTime = time;
+    }
 }
