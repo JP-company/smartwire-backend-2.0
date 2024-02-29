@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -16,5 +18,9 @@ public class ProcessService {
     public Long save(ProcessSaveDto processSaveDto) {
         if (processSaveDto.isEmpty()) return null;
         return processRepository.save(processSaveDto);
+    }
+
+    public void finishProcess(Long machineId, LocalDateTime logDateTime) {
+        processRepository.updateFinishedDateTime(machineId, logDateTime);
     }
 }

@@ -40,6 +40,24 @@ public class LogRepositoryJPA implements LogRepository {
     }
 
     @Override
+    public Long save(LogSaveDto logSaveDto, Long machineId) {
+        Machine machine = em.find(Machine.class, machineId);
+        String jpql =
+                """
+                SELECT p
+                FROM Process p
+                WHERE p.machine = machine
+                ORDER BY p.id DESC
+                """;
+        Process process = em.createQuery(jpql, Process.class)
+                .getSingleResult();
+
+        Log log = logSaveDto.toLog(machine, process);
+        em.persist(log);
+        return log.getId();
+    }
+
+    @Override
     public void save(List<LogSaveDto> logSaveDtos, Long machineId, Long processId) {
         // TODO - 기계 로그 벌크 INSERT
         for (LogSaveDto logSaveDto : logSaveDtos) {
