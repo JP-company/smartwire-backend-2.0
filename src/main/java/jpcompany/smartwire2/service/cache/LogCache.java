@@ -30,6 +30,7 @@ public class LogCache {
     private final LogRepository logRepository;
     private final LogCacheFile logCacheFile;
     private final ObjectMapper objectMapper;
+
     private final Map<Long, ProcessUnit> cache = new ConcurrentHashMap<>();
 
     @PostConstruct
