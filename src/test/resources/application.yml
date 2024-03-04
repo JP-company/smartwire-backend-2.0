@@ -1,0 +1,43 @@
+# 양방향 암호화
+secret: secret1234
+salt: 1234
+
+# 테스트 임베디드 DB 설정
+logging:
+  level:
+    org:
+      springframework:
+        jdbc:
+          datasource:
+            init: DEBUG
+      h2: DEBUG
+      hibernate:
+        SQL: DEBUG
+
+spring:
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  # JPA
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  # 이메일 설정
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: smartwire98
+    password: pxikxyqqapcokvpb
+    properties:
+      mail:
+        smtp:
+          starttls:
+            enable: true
+          auth: true
