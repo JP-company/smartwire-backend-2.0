@@ -22,7 +22,7 @@
 | DB     | MySQL                        |
 | 배포     | Heroku                                    |
 | 웹 프론트             | -               |
-| 윈도우 앱  | C#, Winform                               |
+| 윈도우 앱  | JavaFx(jdk 8)                             |
 | 모바일 앱  | Flutter                                   |
 | Push Notification | FCM |
 
