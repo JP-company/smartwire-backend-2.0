@@ -21,7 +21,7 @@
 | 백엔드 서버 | Java 17, Spring 6.1.2, Spring Boot 3.2.1, Jdbc Template |
 | DB     | MySQL                        |
 | 배포     | Heroku                                    |
-| 웹 프론트             | HTML, CSS, JS, Thymeleaf               |
+| 웹 프론트             | -               |
 | 윈도우 앱  | C#, Winform                               |
 | 모바일 앱  | Flutter                                   |
 | Push Notification | FCM |
