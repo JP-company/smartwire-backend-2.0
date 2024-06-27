@@ -18,9 +18,9 @@
 ### 사용 기술
 | 개발     | 기술                                        |
 |--------|-------------------------------------------|
-| 백엔드 서버 | Java 17, Spring 6.1.2, Spring Boot 3.2.1, Jdbc Template |
+| 백엔드 서버 | Java 17, Spring Boot 3, JPA |
 | DB     | MySQL                        |
-| 배포     | Heroku                                    |
+| 배포     | On-premise                                    |
 | 웹 프론트             | -               |
 | 윈도우 앱  | JavaFx(jdk 8)                             |
 | 모바일 앱  | Flutter                                   |
@@ -42,7 +42,7 @@
     2. 실시간 기계 상태 감지, 서버로 전송
 
 
-### 모바일 앱, 웹 페이지 화면
+### 모바일 앱 화면
 - 모바일 앱 화면 <br>
   <img width="234" height="506" src="https://github.com/JP-company/smartwire-backend/assets/77595494/b7360340-92ee-4198-b425-971906841ab0">
   <img width="234" height="506" src="https://github.com/JP-company/smartwire-backend/assets/77595494/08466b05-ff0f-45d8-a511-6163d2799bfe">
